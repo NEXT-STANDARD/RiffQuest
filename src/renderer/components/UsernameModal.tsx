@@ -8,17 +8,19 @@ import './UsernameModal.css';
 interface UsernameModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (username: string) => void;
+  onSave: (username: string, socialUrl?: string) => void;
 }
 
 export function UsernameModal({ isOpen, onClose, onSave }: UsernameModalProps) {
   const [username, setUsername] = useState('');
+  const [socialUrl, setSocialUrl] = useState('');
   const [error, setError] = useState('');
 
   if (!isOpen) return null;
 
   const handleSave = () => {
     const trimmedUsername = username.trim();
+    const trimmedSocialUrl = socialUrl.trim();
 
     if (trimmedUsername.length < 3) {
       setError('ユーザー名は3文字以上で入力してください');
@@ -37,14 +39,29 @@ export function UsernameModal({ isOpen, onClose, onSave }: UsernameModalProps) {
       return;
     }
 
+    // URLバリデーション（入力がある場合のみ）
+    if (trimmedSocialUrl) {
+      try {
+        new URL(trimmedSocialUrl);
+      } catch {
+        setError('正しいURL形式で入力してください（例: https://twitter.com/username）');
+        return;
+      }
+    }
+
     localStorage.setItem('riffquest_username', trimmedUsername);
-    onSave(trimmedUsername);
+    if (trimmedSocialUrl) {
+      localStorage.setItem('riffquest_social_url', trimmedSocialUrl);
+    }
+    onSave(trimmedUsername, trimmedSocialUrl || undefined);
     setUsername('');
+    setSocialUrl('');
     setError('');
   };
 
   const handleCancel = () => {
     setUsername('');
+    setSocialUrl('');
     setError('');
     onClose();
   };
@@ -72,25 +89,47 @@ export function UsernameModal({ isOpen, onClose, onSave }: UsernameModalProps) {
             世界ランキングに参加するためのユーザー名を入力してください
           </p>
 
-          <input
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            onKeyDown={handleKeyPress}
-            placeholder="例: GuitarHero, ギタリスト123"
-            maxLength={20}
-            autoFocus
-            className={error ? 'error' : ''}
-          />
+          <div className="input-group">
+            <label htmlFor="username">ユーザー名 <span className="required">*</span></label>
+            <input
+              id="username"
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              onKeyDown={handleKeyPress}
+              placeholder="例: GuitarHero, ギタリスト123"
+              maxLength={20}
+              autoFocus
+              className={error ? 'error' : ''}
+            />
+          </div>
+
+          <div className="input-group">
+            <label htmlFor="socialUrl">
+              SNS / 配信チャンネルURL <span className="optional">（任意）</span>
+            </label>
+            <input
+              id="socialUrl"
+              type="url"
+              value={socialUrl}
+              onChange={(e) => setSocialUrl(e.target.value)}
+              onKeyDown={handleKeyPress}
+              placeholder="例: https://twitter.com/yourname, https://youtube.com/@channel"
+              className={error ? 'error' : ''}
+            />
+            <p className="input-hint">
+              Twitter, YouTube, Twitchなどのプロフィールや配信チャンネルのURLを入力すると、ランキングからリンクされます
+            </p>
+          </div>
 
           {error && <p className="error-message">{error}</p>}
 
           <div className="username-rules">
             <p className="rules-title">ルール:</p>
             <ul>
-              <li>3〜20文字</li>
-              <li>日本語、英数字、アンダースコア、ハイフン使用可能</li>
-              <li>後から変更可能</li>
+              <li>ユーザー名: 3〜20文字（日本語、英数字、アンダースコア、ハイフン）</li>
+              <li>URL: 完全なURL形式で入力（http://またはhttps://で始まる）</li>
+              <li>どちらも後から変更可能</li>
             </ul>
           </div>
         </div>

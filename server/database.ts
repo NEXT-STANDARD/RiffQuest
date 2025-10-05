@@ -513,6 +513,14 @@ export class DatabaseManager {
         icon: '👑',
         rarity: 'legendary',
       },
+      {
+        id: 'twenty_thousand_hours',
+        title: 'マスター・オブ・ギター',
+        description: '累計20,000時間練習 - 真の達人の証',
+        completed: totalMinutes >= 1200000,
+        icon: '🌟',
+        rarity: 'mythic',
+      },
 
       // === セッション数系 ===
       {

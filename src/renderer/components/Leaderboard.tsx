@@ -14,6 +14,7 @@ interface LeaderboardEntry {
   level: number;
   best_streak: number;
   country?: string;
+  social_url?: string;
 }
 
 export function Leaderboard() {
@@ -70,6 +71,16 @@ export function Leaderboard() {
     if (rank === 2) return '🥈';
     if (rank === 3) return '🥉';
     return `#${rank}`;
+  };
+
+  // URLからプラットフォームアイコンを取得
+  const getSocialIcon = (url: string) => {
+    if (url.includes('twitter.com') || url.includes('x.com')) return '🐦';
+    if (url.includes('youtube.com') || url.includes('youtu.be')) return '▶️';
+    if (url.includes('twitch.tv')) return '📺';
+    if (url.includes('instagram.com')) return '📷';
+    if (url.includes('tiktok.com')) return '🎵';
+    return '🔗';
   };
 
   if (!isSupabaseEnabled()) {
@@ -135,7 +146,20 @@ export function Leaderboard() {
             <div key={player.id} className="leaderboard-item">
               <div className="rank">{getMedalIcon(index + 1)}</div>
               <div className="player-info">
-                <div className="username">{player.username}</div>
+                <div className="username-row">
+                  <span className="username">{player.username}</span>
+                  {player.social_url && (
+                    <a
+                      href={player.social_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="social-link"
+                      title={player.social_url}
+                    >
+                      {getSocialIcon(player.social_url)}
+                    </a>
+                  )}
+                </div>
                 <div className="stats">
                   Lv.{player.level} • {player.total_xp.toLocaleString()} XP
                   {player.best_streak > 0 && (

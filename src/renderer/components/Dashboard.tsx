@@ -171,10 +171,11 @@ export function Dashboard() {
   };
 
   // Supabaseにスコアを送信
-  const sendScoreToSupabase = async (username: string, isAutoUpdate = false) => {
+  const sendScoreToSupabase = async (username: string, socialUrl?: string, isAutoUpdate = false) => {
     if (!profile) return;
 
     const userId = getUserId();
+    const storedSocialUrl = socialUrl || localStorage.getItem('riffquest_social_url') || undefined;
 
     try {
       const { error } = await supabase
@@ -185,6 +186,7 @@ export function Dashboard() {
           total_xp: profile.total_xp,
           level: Math.floor(profile.level), // 整数に変換
           best_streak: profile.best_streak,
+          social_url: storedSocialUrl,
         }, {
           onConflict: 'user_id'
         });
@@ -209,10 +211,10 @@ export function Dashboard() {
   };
 
   // モーダルからユーザー名が保存されたときの処理
-  const handleUsernameSaved = async (username: string) => {
+  const handleUsernameSaved = async (username: string, socialUrl?: string) => {
     setIsUsernameModalOpen(false);
     setHasJoinedLeaderboard(true); // ランキング参加状態を更新
-    await sendScoreToSupabase(username);
+    await sendScoreToSupabase(username, socialUrl);
   };
 
   return (

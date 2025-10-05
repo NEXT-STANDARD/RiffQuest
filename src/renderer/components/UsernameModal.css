@@ -92,6 +92,36 @@
   line-height: 1.5;
 }
 
+/* 入力グループ */
+.input-group {
+  margin-bottom: 20px;
+}
+
+.input-group label {
+  display: block;
+  color: #fff;
+  font-size: 14px;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.input-group .required {
+  color: #ff6b6b;
+}
+
+.input-group .optional {
+  color: #aaa;
+  font-weight: normal;
+  font-size: 12px;
+}
+
+.input-hint {
+  color: #888;
+  font-size: 12px;
+  margin: 6px 0 0 0;
+  line-height: 1.4;
+}
+
 .modal-body input {
   width: 100%;
   padding: 14px 16px;
