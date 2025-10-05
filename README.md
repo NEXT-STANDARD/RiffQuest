@@ -5,6 +5,8 @@
 ![Version](https://img.shields.io/badge/version-0.1.0-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
+[English README](README.en.md)
+
 ## ✨ 特徴
 
 - 🎯 **デイリータスク**: 毎日の練習目標を設定して達成感を味わう
