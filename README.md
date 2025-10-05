@@ -28,7 +28,7 @@
 
 1. **リポジトリをクローン**
 ```bash
-git clone https://github.com/あなたのユーザー名/RiffQuest.git
+git clone https://github.com/NEXT-STANDARD/RiffQuest.git
 cd RiffQuest
 ```
 
@@ -202,7 +202,7 @@ SQLite (WALモード) を使用。以下のテーブル:
 
 ## 📧 サポート
 
-問題や質問がある場合は [Issues](https://github.com/あなたのユーザー名/RiffQuest/issues) を作成してください。
+問題や質問がある場合は [Issues](https://github.com/NEXT-STANDARD/RiffQuest/issues) を作成してください。
 
 ---
 
