@@ -208,7 +208,25 @@ export class DatabaseManager {
    * ユーザープロフィールを取得
    */
   getUserProfile() {
-    return this.db.prepare('SELECT * FROM user_profile WHERE id = 1').get();
+    const profile = this.db.prepare('SELECT * FROM user_profile WHERE id = 1').get() as any;
+
+    if (profile) {
+      const currentLevel = Math.floor(profile.level);
+      const currentLevelTotalXP = this.getTotalXPForLevel(currentLevel);
+      const nextLevelTotalXP = this.getTotalXPForLevel(currentLevel + 1);
+      const xpForNextLevel = this.getXPForNextLevel(currentLevel);
+      const currentLevelProgress = profile.total_xp - currentLevelTotalXP;
+      const progressPercentage = (currentLevelProgress / xpForNextLevel) * 100;
+
+      return {
+        ...profile,
+        current_level_xp: currentLevelProgress,
+        xp_for_next_level: xpForNextLevel,
+        progress_percentage: Math.min(progressPercentage, 100)
+      };
+    }
+
+    return profile;
   }
 
   /**
@@ -378,6 +396,25 @@ export class DatabaseManager {
     const totalMinutes = Math.floor(allSessions.reduce((sum, s) => sum + s.duration_seconds, 0) / 60);
 
     const achievements = [
+      // === 基本 - 初回系 ===
+      {
+        id: 'first_session',
+        title: 'First Session',
+        description: '初めての練習セッション',
+        completed: totalSessions >= 1,
+        icon: '🎵',
+        rarity: 'common',
+      },
+      {
+        id: 'first_xp',
+        title: 'XP初獲得',
+        description: '初めてXPを獲得',
+        completed: profile.total_xp > 0,
+        icon: '✨',
+        rarity: 'common',
+      },
+
+      // === レベル系 ===
       {
         id: 'beginner',
         title: 'ビギナー',
@@ -403,6 +440,14 @@ export class DatabaseManager {
         rarity: 'rare',
       },
       {
+        id: 'level_25',
+        title: 'クォーター',
+        description: 'レベル25到達',
+        completed: profile.level >= 25,
+        icon: '💎',
+        rarity: 'rare',
+      },
+      {
         id: 'master',
         title: 'マスター',
         description: 'レベル50到達',
@@ -411,76 +456,316 @@ export class DatabaseManager {
         rarity: 'epic',
       },
       {
-        id: 'first_hour',
-        title: '初めての1時間',
-        description: '累計1時間練習',
-        completed: totalMinutes >= 60,
+        id: 'level_100',
+        title: 'センチュリオン',
+        description: 'レベル100到達',
+        completed: profile.level >= 100,
+        icon: '⚡',
+        rarity: 'legendary',
+      },
+
+      // === 練習時間系 ===
+      {
+        id: 'minutes_30',
+        title: '30分練習家',
+        description: '累計30分練習',
+        completed: totalMinutes >= 30,
         icon: '⏰',
         rarity: 'common',
       },
       {
+        id: 'first_hour',
+        title: '1時間ギタリスト',
+        description: '累計1時間練習',
+        completed: totalMinutes >= 60,
+        icon: '🎯',
+        rarity: 'common',
+      },
+      {
         id: 'ten_hours',
-        title: '10時間の鍛錬',
+        title: '10時間の壁',
         description: '累計10時間練習',
         completed: totalMinutes >= 600,
-        icon: '🔥',
+        icon: '📈',
         rarity: 'uncommon',
       },
       {
+        id: 'fifty_hours',
+        title: '50時間マスター',
+        description: '累計50時間練習',
+        completed: totalMinutes >= 3000,
+        icon: '🔥',
+        rarity: 'rare',
+      },
+      {
         id: 'hundred_hours',
-        title: '100時間の修行',
+        title: '100時間レジェンド',
         description: '累計100時間練習',
         completed: totalMinutes >= 6000,
         icon: '💪',
         rarity: 'rare',
       },
       {
-        id: 'streak_3',
-        title: '3日連続',
-        description: '3日連続で練習',
-        completed: profile.current_streak >= 3,
-        icon: '🔥',
-        rarity: 'common',
+        id: 'thousand_hours',
+        title: '1000時間の達人',
+        description: '累計1000時間練習',
+        completed: totalMinutes >= 60000,
+        icon: '👑',
+        rarity: 'legendary',
       },
-      {
-        id: 'streak_7',
-        title: '1週間継続',
-        description: '7日連続で練習',
-        completed: profile.current_streak >= 7,
-        icon: '⚡',
-        rarity: 'uncommon',
-      },
-      {
-        id: 'streak_30',
-        title: '1ヶ月継続',
-        description: '30日連続で練習',
-        completed: profile.current_streak >= 30,
-        icon: '🌟',
-        rarity: 'epic',
-      },
+
+      // === セッション数系 ===
       {
         id: 'sessions_10',
-        title: '10回の練習',
-        description: '10セッション完了',
+        title: '10セッション達成',
+        description: '10回の練習を完了',
         completed: totalSessions >= 10,
-        icon: '📝',
+        icon: '🎪',
         rarity: 'common',
       },
       {
         id: 'sessions_50',
-        title: '50回の練習',
-        description: '50セッション完了',
+        title: '50セッション達成',
+        description: '50回の練習を完了',
         completed: totalSessions >= 50,
-        icon: '📚',
+        icon: '🌟',
         rarity: 'uncommon',
       },
       {
         id: 'sessions_100',
-        title: '100回の練習',
-        description: '100セッション完了',
+        title: '100セッション達成',
+        description: '100回の練習を完了',
         completed: totalSessions >= 100,
-        icon: '🏆',
+        icon: '💫',
         rarity: 'rare',
+      },
+      {
+        id: 'sessions_500',
+        title: '500セッション達成',
+        description: '500回の練習を完了',
+        completed: totalSessions >= 500,
+        icon: '🌈',
+        rarity: 'epic',
+      },
+
+      // === 連続練習系 ===
+      {
+        id: 'streak_3',
+        title: '継続は力なり',
+        description: '3日連続で練習',
+        completed: profile.current_streak >= 3,
+        icon: '🌱',
+        rarity: 'common',
+      },
+      {
+        id: 'streak_7',
+        title: 'ウィークリーファイター',
+        description: '7日連続で練習',
+        completed: profile.current_streak >= 7,
+        icon: '🔥',
+        rarity: 'uncommon',
+      },
+      {
+        id: 'streak_14',
+        title: '2週間ストリーク',
+        description: '14日連続で練習',
+        completed: profile.current_streak >= 14,
+        icon: '⚡',
+        rarity: 'rare',
+      },
+      {
+        id: 'streak_30',
+        title: '1ヶ月チャレンジャー',
+        description: '30日連続で練習',
+        completed: profile.current_streak >= 30,
+        icon: '💪',
+        rarity: 'epic',
+      },
+      {
+        id: 'streak_100',
+        title: 'アイアンウィル',
+        description: '100日連続で練習',
+        completed: profile.current_streak >= 100,
+        icon: '👑',
+        rarity: 'legendary',
+      },
+      {
+        id: 'streak_365',
+        title: 'レジェンダリーストリーク',
+        description: '365日連続で練習',
+        completed: profile.current_streak >= 365,
+        icon: '🏆',
+        rarity: 'mythic',
+      },
+
+      // === XP系 ===
+      {
+        id: 'xp_100',
+        title: '100 XP達成',
+        description: '累計100 XP獲得',
+        completed: profile.total_xp >= 100,
+        icon: '🎖️',
+        rarity: 'common',
+      },
+      {
+        id: 'xp_1000',
+        title: '1,000 XP達成',
+        description: '累計1,000 XP獲得',
+        completed: profile.total_xp >= 1000,
+        icon: '💫',
+        rarity: 'uncommon',
+      },
+      {
+        id: 'xp_10000',
+        title: '10,000 XP達成',
+        description: '累計10,000 XP獲得',
+        completed: profile.total_xp >= 10000,
+        icon: '🌟',
+        rarity: 'rare',
+      },
+      {
+        id: 'xp_100000',
+        title: '100,000 XP達成',
+        description: '累計100,000 XP獲得',
+        completed: profile.total_xp >= 100000,
+        icon: '👑',
+        rarity: 'legendary',
+      },
+
+      // === 時間帯系 ===
+      {
+        id: 'early_bird',
+        title: '早朝の練習者',
+        description: '朝5時〜7時に練習',
+        completed: allSessions.some(s => {
+          const hour = new Date(s.start_time).getHours();
+          return hour >= 5 && hour < 7;
+        }),
+        icon: '🌅',
+        rarity: 'uncommon',
+      },
+      {
+        id: 'morning_practice',
+        title: '朝型ギタリスト',
+        description: '朝7時〜9時に練習',
+        completed: allSessions.some(s => {
+          const hour = new Date(s.start_time).getHours();
+          return hour >= 7 && hour < 9;
+        }),
+        icon: '☀️',
+        rarity: 'common',
+      },
+      {
+        id: 'noon_practice',
+        title: 'お昼の休憩練習',
+        description: '12時〜14時に練習',
+        completed: allSessions.some(s => {
+          const hour = new Date(s.start_time).getHours();
+          return hour >= 12 && hour < 14;
+        }),
+        icon: '🌤️',
+        rarity: 'common',
+      },
+      {
+        id: 'evening_practice',
+        title: '夕方の練習者',
+        description: '17時〜19時に練習',
+        completed: allSessions.some(s => {
+          const hour = new Date(s.start_time).getHours();
+          return hour >= 17 && hour < 19;
+        }),
+        icon: '🌆',
+        rarity: 'common',
+      },
+      {
+        id: 'night_owl',
+        title: '夜型ギタリスト',
+        description: '22時〜24時に練習',
+        completed: allSessions.some(s => {
+          const hour = new Date(s.start_time).getHours();
+          return hour >= 22 && hour < 24;
+        }),
+        icon: '🌙',
+        rarity: 'uncommon',
+      },
+      {
+        id: 'midnight_practice',
+        title: '深夜の練習者',
+        description: '0時〜3時に練習',
+        completed: allSessions.some(s => {
+          const hour = new Date(s.start_time).getHours();
+          return hour >= 0 && hour < 3;
+        }),
+        icon: '🌃',
+        rarity: 'rare',
+      },
+
+      // === 曜日系 ===
+      {
+        id: 'monday_warrior',
+        title: '月曜の戦士',
+        description: '月曜日に練習',
+        completed: allSessions.some(s => new Date(s.start_time).getDay() === 1),
+        icon: '💼',
+        rarity: 'common',
+      },
+      {
+        id: 'tuesday_player',
+        title: '火曜のプレイヤー',
+        description: '火曜日に練習',
+        completed: allSessions.some(s => new Date(s.start_time).getDay() === 2),
+        icon: '🔥',
+        rarity: 'common',
+      },
+      {
+        id: 'wednesday_musician',
+        title: '水曜のミュージシャン',
+        description: '水曜日に練習',
+        completed: allSessions.some(s => new Date(s.start_time).getDay() === 3),
+        icon: '💧',
+        rarity: 'common',
+      },
+      {
+        id: 'thursday_guitarist',
+        title: '木曜のギタリスト',
+        description: '木曜日に練習',
+        completed: allSessions.some(s => new Date(s.start_time).getDay() === 4),
+        icon: '🌳',
+        rarity: 'common',
+      },
+      {
+        id: 'friday_rocker',
+        title: '金曜のロッカー',
+        description: '金曜日に練習',
+        completed: allSessions.some(s => new Date(s.start_time).getDay() === 5),
+        icon: '🎉',
+        rarity: 'common',
+      },
+      {
+        id: 'saturday_shredder',
+        title: '土曜の練習魔',
+        description: '土曜日に練習',
+        completed: allSessions.some(s => new Date(s.start_time).getDay() === 6),
+        icon: '🎸',
+        rarity: 'common',
+      },
+      {
+        id: 'sunday_player',
+        title: '日曜のプレイヤー',
+        description: '日曜日に練習',
+        completed: allSessions.some(s => new Date(s.start_time).getDay() === 0),
+        icon: '☀️',
+        rarity: 'common',
+      },
+      {
+        id: 'week_complete',
+        title: 'ウィークコンプリート',
+        description: '全ての曜日で練習を達成',
+        completed: [0, 1, 2, 3, 4, 5, 6].every(day =>
+          allSessions.some(s => new Date(s.start_time).getDay() === day)
+        ),
+        icon: '🌈',
+        rarity: 'epic',
       },
     ];
 

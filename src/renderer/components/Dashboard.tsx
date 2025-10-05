@@ -16,6 +16,9 @@ interface UserProfile {
   level: number;
   current_streak: number;
   best_streak: number;
+  current_level_xp?: number;
+  xp_for_next_level?: number;
+  progress_percentage?: number;
 }
 
 interface DailyGoal {
@@ -117,10 +120,7 @@ export function Dashboard() {
 
   const getLevelProgress = () => {
     if (!profile) return 0;
-    const currentLevelXP = (profile.level - 1) * 100;
-    const nextLevelXP = profile.level * 100;
-    const progressInLevel = profile.total_xp - currentLevelXP;
-    return (progressInLevel / 100) * 100;
+    return profile.progress_percentage || 0;
   };
 
   const completedGoalsCount = goals.filter(g => g.completed).length;
@@ -222,11 +222,14 @@ export function Dashboard() {
         <div className="profile-header">
           <div className="profile-avatar">🎸</div>
           <div className="profile-info">
-            <h2>レベル {profile?.level || 1}</h2>
+            <h2>レベル {Math.floor(profile?.level || 1)}</h2>
             <div className="xp-bar">
               <div className="xp-fill" style={{ width: `${getLevelProgress()}%` }}></div>
             </div>
-            <p className="xp-text">{profile?.total_xp || 0} XP</p>
+            <p className="xp-text">
+              {profile?.current_level_xp || 0} / {profile?.xp_for_next_level || 100} XP
+              <span className="xp-total"> (合計: {profile?.total_xp || 0} XP)</span>
+            </p>
           </div>
         </div>
 
@@ -254,10 +257,15 @@ export function Dashboard() {
           </div>
         </div>
 
-        {/* スコア送信ボタン */}
-        {isSupabaseEnabled() && (
+        {/* ランキングリンク */}
+        {isSupabaseEnabled() && hasJoinedLeaderboard && (
+          <a href="/leaderboard" className="leaderboard-link">
+            🏆 ランキングを確認
+          </a>
+        )}
+        {isSupabaseEnabled() && !hasJoinedLeaderboard && (
           <button onClick={submitScore} className="submit-score-btn">
-            {hasJoinedLeaderboard ? '🔄 スコアを更新' : '🏆 ランキングに参加'}
+            🏆 ランキングに参加
           </button>
         )}
       </div>
@@ -293,27 +301,37 @@ export function Dashboard() {
 
       {/* 実績 */}
       <div className="achievements-section">
-        <h3>🏆 実績 ({unlockedAchievements}/{achievements.length})</h3>
+        <div className="flex items-center justify-between mb-4">
+          <h3>🏆 最近の実績 ({unlockedAchievements}/{achievements.length})</h3>
+          <a href="/achievements" className="text-purple-400 hover:text-purple-300 font-semibold">
+            すべて見る →
+          </a>
+        </div>
         <div className="achievements-grid">
-          {achievements.map((achievement) => (
+          {completedAchievements.slice(0, 6).map((achievement) => (
             <div
               key={achievement.id}
-              className={`achievement-card ${achievement.completed ? 'unlocked' : 'locked'}`}
-              style={{ borderColor: achievement.completed ? getRarityColor(achievement.rarity) : '#444' }}
+              className="achievement-card unlocked"
+              style={{ borderColor: getRarityColor(achievement.rarity) }}
             >
               <div className="achievement-icon">{achievement.icon}</div>
               <div className="achievement-content">
                 <h4>{achievement.title}</h4>
                 <p>{achievement.description}</p>
-                {achievement.completed && (
-                  <span className="achievement-badge" style={{ background: getRarityColor(achievement.rarity) }}>
-                    {achievement.rarity.toUpperCase()}
-                  </span>
-                )}
+                <span className="achievement-badge" style={{ background: getRarityColor(achievement.rarity) }}>
+                  {achievement.rarity.toUpperCase()}
+                </span>
               </div>
             </div>
           ))}
         </div>
+        {completedAchievements.length === 0 && (
+          <div className="text-center py-8 text-gray-400">
+            <p className="text-xl mb-2">🎯</p>
+            <p>まだ実績を達成していません</p>
+            <p className="text-sm">練習を続けて最初の実績を解除しよう！</p>
+          </div>
+        )}
       </div>
 
       {/* ユーザー名設定モーダル */}

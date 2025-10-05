@@ -64,7 +64,15 @@
 .xp-text {
   margin: 0;
   color: rgba(255, 255, 255, 0.9);
-  font-size: 14px;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.xp-total {
+  font-size: 12px;
+  font-weight: normal;
+  opacity: 0.7;
+  margin-left: 8px;
 }
 
 .profile-stats {
@@ -73,7 +81,8 @@
   gap: 15px;
 }
 
-.submit-score-btn {
+.submit-score-btn,
+.leaderboard-link {
   display: block;
   margin: 20px auto 0;
   padding: 14px 32px;
@@ -86,14 +95,19 @@
   cursor: pointer;
   transition: transform 0.2s, box-shadow 0.3s;
   box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
+  text-align: center;
+  text-decoration: none;
+  width: fit-content;
 }
 
-.submit-score-btn:hover {
+.submit-score-btn:hover,
+.leaderboard-link:hover {
   transform: translateY(-3px);
   box-shadow: 0 6px 20px rgba(255, 215, 0, 0.5);
 }
 
-.submit-score-btn:active {
+.submit-score-btn:active,
+.leaderboard-link:active {
   transform: translateY(-1px);
 }
 

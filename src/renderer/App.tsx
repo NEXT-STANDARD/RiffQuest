@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import { OBSConnection } from './components/OBSConnection-WebApp';
 import { Dashboard } from './components/Dashboard';
 import { Leaderboard } from './components/Leaderboard';
+import { Achievements } from './components/Achievements';
 import { History } from './components/History';
 import './App.css';
 
@@ -16,7 +17,8 @@ function App() {
 
           <nav className="app-nav">
             <Link to="/">ダッシュボード</Link>
-            <Link to="/leaderboard">🏆 ランキング</Link>
+            <Link to="/achievements">🏆 実績</Link>
+            <Link to="/leaderboard">🌍 ランキング</Link>
             <Link to="/obs">OBS接続</Link>
             <Link to="/history">練習履歴</Link>
           </nav>
@@ -25,6 +27,7 @@ function App() {
         <main className="app-main">
           <Routes>
             <Route path="/" element={<Dashboard />} />
+            <Route path="/achievements" element={<Achievements />} />
             <Route path="/leaderboard" element={<Leaderboard />} />
             <Route path="/obs" element={<OBSConnection />} />
             <Route path="/history" element={<History />} />
