@@ -73,6 +73,30 @@
   gap: 15px;
 }
 
+.submit-score-btn {
+  display: block;
+  margin: 20px auto 0;
+  padding: 14px 32px;
+  background: linear-gradient(135deg, #ffd700, #ffed4e);
+  color: #333;
+  border: none;
+  border-radius: 12px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.3s;
+  box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
+}
+
+.submit-score-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(255, 215, 0, 0.5);
+}
+
+.submit-score-btn:active {
+  transform: translateY(-1px);
+}
+
 .stat-box {
   background: rgba(255, 255, 255, 0.1);
   padding: 20px;

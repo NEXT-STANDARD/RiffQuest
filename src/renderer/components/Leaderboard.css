@@ -1,0 +1,190 @@
+.leaderboard {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  background: #1a1a1a;
+  min-height: 100vh;
+}
+
+.leaderboard h2 {
+  text-align: center;
+  color: #fff;
+  margin-bottom: 20px;
+  font-size: 32px;
+}
+
+/* フィルター */
+.leaderboard-filters {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.leaderboard-filters button {
+  padding: 10px 20px;
+  border: 2px solid #667eea;
+  background: transparent;
+  color: #fff;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-size: 16px;
+}
+
+.leaderboard-filters button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.leaderboard-filters button.active {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+}
+
+.leaderboard-filters button:not(.active):not(:disabled):hover {
+  background: rgba(102, 126, 234, 0.2);
+}
+
+/* リスト */
+.leaderboard-list {
+  background: #2c2c2c;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.leaderboard-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 15px;
+  border-bottom: 1px solid #3a3a3a;
+  transition: background 0.2s;
+}
+
+.leaderboard-item:last-child {
+  border-bottom: none;
+}
+
+.leaderboard-item:hover {
+  background: #3a3a3a;
+}
+
+.rank {
+  font-size: 24px;
+  font-weight: bold;
+  min-width: 60px;
+  text-align: center;
+  color: #ffd700;
+}
+
+.player-info {
+  flex: 1;
+}
+
+.username {
+  font-size: 18px;
+  font-weight: bold;
+  color: #fff;
+  margin-bottom: 4px;
+}
+
+.stats {
+  font-size: 14px;
+  color: #aaa;
+}
+
+.streak {
+  color: #ff6b6b;
+  font-weight: bold;
+}
+
+/* ローディング */
+.loading {
+  text-align: center;
+  padding: 40px;
+  color: #aaa;
+  font-size: 18px;
+}
+
+/* エラー */
+.leaderboard-error {
+  background: #ff6b6b;
+  color: white;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.leaderboard-error button {
+  margin-top: 10px;
+  padding: 8px 16px;
+  background: white;
+  color: #ff6b6b;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+/* 空の状態 */
+.leaderboard-empty {
+  text-align: center;
+  padding: 60px 20px;
+  color: #aaa;
+}
+
+.leaderboard-empty p {
+  margin: 10px 0;
+  font-size: 16px;
+}
+
+/* 無効状態 */
+.leaderboard-disabled {
+  background: #2c2c2c;
+  border-radius: 12px;
+  padding: 40px;
+  text-align: center;
+  color: #aaa;
+}
+
+.leaderboard-disabled p {
+  margin: 10px 0;
+  font-size: 16px;
+}
+
+.leaderboard-disabled a {
+  color: #667eea;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.leaderboard-disabled a:hover {
+  text-decoration: underline;
+}
+
+/* 更新ボタン */
+.refresh-button {
+  display: block;
+  margin: 0 auto;
+  padding: 12px 30px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.refresh-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.refresh-button:active {
+  transform: translateY(0);
+}

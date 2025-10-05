@@ -4,6 +4,8 @@
  */
 
 import { useState, useEffect } from 'react';
+import { supabase, isSupabaseEnabled } from '../../lib/supabase';
+import { UsernameModal } from './UsernameModal';
 import './Dashboard.css';
 
 const API_URL = 'http://localhost:3030';
@@ -48,12 +50,39 @@ export function Dashboard() {
   const [goals, setGoals] = useState<DailyGoal[]>([]);
   const [achievements, setAchievements] = useState<Achievement[]>([]);
   const [todayStats, setTodayStats] = useState<DailyStats | null>(null);
+  const [isUsernameModalOpen, setIsUsernameModalOpen] = useState(false);
+  const [hasJoinedLeaderboard, setHasJoinedLeaderboard] = useState(false);
+  const [previousLevel, setPreviousLevel] = useState<number | null>(null);
 
   useEffect(() => {
     fetchData();
     const interval = setInterval(fetchData, 10000); // 10秒ごとに更新
     return () => clearInterval(interval);
   }, []);
+
+  // ランキング参加状態をチェック
+  useEffect(() => {
+    const username = localStorage.getItem('riffquest_username');
+    setHasJoinedLeaderboard(!!username);
+  }, []);
+
+  // レベルアップ時に自動送信
+  useEffect(() => {
+    if (!profile || !isSupabaseEnabled()) return;
+
+    const currentLevel = Math.floor(profile.level);
+
+    // 前回のレベルが存在し、レベルアップした場合
+    if (previousLevel !== null && currentLevel > previousLevel) {
+      const username = localStorage.getItem('riffquest_username');
+      if (username) {
+        // レベルアップ時に自動送信
+        sendScoreToSupabase(username, true);
+      }
+    }
+
+    setPreviousLevel(currentLevel);
+  }, [profile?.level]);
 
   const fetchData = async () => {
     try {
@@ -108,6 +137,84 @@ export function Dashboard() {
     }
   };
 
+  // ユーザーIDを取得または生成
+  const getUserId = () => {
+    let userId = localStorage.getItem('riffquest_user_id');
+    if (!userId) {
+      userId = crypto.randomUUID();
+      localStorage.setItem('riffquest_user_id', userId);
+    }
+    return userId;
+  };
+
+  // スコアをSupabaseに送信
+  const submitScore = async () => {
+    if (!isSupabaseEnabled()) {
+      alert('Supabaseが設定されていません。.envファイルを確認してください。');
+      return;
+    }
+
+    if (!profile) {
+      alert('プロフィール情報を読み込み中です...');
+      return;
+    }
+
+    const username = localStorage.getItem('riffquest_username');
+    if (!username) {
+      // ユーザー名が未設定の場合、モーダルを開く
+      setIsUsernameModalOpen(true);
+      return;
+    }
+
+    // ユーザー名が設定済みの場合、スコアを送信
+    await sendScoreToSupabase(username);
+  };
+
+  // Supabaseにスコアを送信
+  const sendScoreToSupabase = async (username: string, isAutoUpdate = false) => {
+    if (!profile) return;
+
+    const userId = getUserId();
+
+    try {
+      const { error } = await supabase
+        .from('leaderboard')
+        .upsert({
+          user_id: userId,
+          username: username,
+          total_xp: profile.total_xp,
+          level: Math.floor(profile.level), // 整数に変換
+          best_streak: profile.best_streak,
+        }, {
+          onConflict: 'user_id'
+        });
+
+      if (error) {
+        throw error;
+      }
+
+      // 手動更新の場合のみアラート表示
+      if (!isAutoUpdate) {
+        const levelFloor = Math.floor(profile.level);
+        alert(`🎉 スコアを送信しました！\n\nユーザー名: ${username}\nレベル: ${levelFloor}\nXP: ${profile.total_xp.toLocaleString()}`);
+      } else {
+        console.log('🎉 レベルアップ！スコアを自動更新しました');
+      }
+    } catch (error: any) {
+      console.error('Error submitting score:', error);
+      if (!isAutoUpdate) {
+        alert('スコア送信に失敗しました: ' + error.message);
+      }
+    }
+  };
+
+  // モーダルからユーザー名が保存されたときの処理
+  const handleUsernameSaved = async (username: string) => {
+    setIsUsernameModalOpen(false);
+    setHasJoinedLeaderboard(true); // ランキング参加状態を更新
+    await sendScoreToSupabase(username);
+  };
+
   return (
     <div className="dashboard">
       {/* プロフィールカード */}
@@ -146,6 +253,13 @@ export function Dashboard() {
             </div>
           </div>
         </div>
+
+        {/* スコア送信ボタン */}
+        {isSupabaseEnabled() && (
+          <button onClick={submitScore} className="submit-score-btn">
+            {hasJoinedLeaderboard ? '🔄 スコアを更新' : '🏆 ランキングに参加'}
+          </button>
+        )}
       </div>
 
       {/* デイリータスク */}
@@ -201,6 +315,13 @@ export function Dashboard() {
           ))}
         </div>
       </div>
+
+      {/* ユーザー名設定モーダル */}
+      <UsernameModal
+        isOpen={isUsernameModalOpen}
+        onClose={() => setIsUsernameModalOpen(false)}
+        onSave={handleUsernameSaved}
+      />
     </div>
   );
 }
