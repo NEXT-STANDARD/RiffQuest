@@ -1,0 +1,28 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm init:*)",
+      "Bash(npm install:*)",
+      "Bash(npm run obs-test:*)",
+      "Bash(npm run build:main:*)",
+      "Bash(npm run dev:*)",
+      "Bash(NODE_ENV=development npm run dev:electron)",
+      "Bash(npx electron:*)",
+      "Bash(cat:*)",
+      "Bash(node:*)",
+      "Bash(pkill:*)",
+      "Bash(npm uninstall:*)",
+      "Bash(npm run dev:electron:*)",
+      "Bash(./node_modules/.bin/electron:*)",
+      "Bash(npm run dev:server:*)",
+      "Bash(npx tsc:*)",
+      "Bash(npm run dev:client:*)",
+      "Bash(curl -s http://localhost:5173/overlay.html)",
+      "Bash(exit 0)",
+      "Bash(git init:*)",
+      "Bash(git add:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

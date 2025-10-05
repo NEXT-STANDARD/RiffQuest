@@ -1,0 +1,48 @@
+{
+  "name": "riffquest",
+  "version": "0.1.0",
+  "description": "ギター練習を可視化・計測・ゲーム化する OBS 連携ツール",
+  "main": "dist/main/main.js",
+  "author": "霧島フェニックス",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "dev:electron": "tsc -p tsconfig.main.json && electron .",
+    "build": "tsc && vite build",
+    "build:main": "tsc -p tsconfig.main.json",
+    "build:renderer": "vite build",
+    "start": "npm run build:main && electron .",
+    "package": "electron-builder",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev:server": "tsc -p tsconfig.server.json && node dist-server/index.js",
+    "dev:client": "vite",
+    "build:server": "tsc -p tsconfig.server.json",
+    "start:server": "node dist-server/index.js"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
+    "@types/node": "^24.6.2",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "@vitejs/plugin-react": "^5.0.4",
+    "electron": "^32.2.1",
+    "electron-builder": "^26.0.12",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "typescript": "^5.9.3",
+    "vite": "^7.1.9"
+  },
+  "dependencies": {
+    "better-sqlite3": "^12.4.1",
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "obs-websocket-js": "^5.0.6",
+    "react-router-dom": "^7.9.3",
+    "socket.io": "^4.8.1",
+    "socket.io-client": "^4.8.1",
+    "ws": "^8.18.3"
+  }
+}
