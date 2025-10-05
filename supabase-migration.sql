@@ -41,6 +41,11 @@ CREATE TRIGGER update_leaderboard_updated_at
 -- Row Level Security (RLS) 設定
 ALTER TABLE leaderboard ENABLE ROW LEVEL SECURITY;
 
+-- 既存のポリシーを削除（存在する場合）
+DROP POLICY IF EXISTS "Enable read access for all users" ON leaderboard;
+DROP POLICY IF EXISTS "Enable insert for all users" ON leaderboard;
+DROP POLICY IF EXISTS "Enable update for users based on username" ON leaderboard;
+
 -- 誰でも読み取り可能
 CREATE POLICY "Enable read access for all users" ON leaderboard
     FOR SELECT USING (true);
