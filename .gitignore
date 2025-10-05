@@ -28,9 +28,6 @@ dist-electron
 # Claude Code settings
 .claude/
 
-# Documentation (personal notes)
-docs/
-
 # POC/Test files
 poc/
 
