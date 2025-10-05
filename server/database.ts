@@ -133,13 +133,56 @@ export class DatabaseManager {
    * ユーザーにXPを追加
    */
   private addXP(xp: number): void {
+    const profile = this.getUserProfile() as any;
+    const newTotalXP = profile.total_xp + xp;
+    const newLevel = this.calculateLevel(newTotalXP);
+
     this.db.prepare(`
       UPDATE user_profile
-      SET total_xp = total_xp + ?,
-          level = (total_xp + ?) / 100 + 1,
+      SET total_xp = ?,
+          level = ?,
           updated_at = CURRENT_TIMESTAMP
       WHERE id = 1
-    `).run(xp, xp);
+    `).run(newTotalXP, newLevel);
+  }
+
+  /**
+   * 総XPからレベルを計算（RPG風の累積式）
+   * レベル1→2: 100 XP
+   * レベル2→3: 200 XP
+   * レベル3→4: 300 XP
+   * レベルN→N+1: N × 100 XP
+   */
+  private calculateLevel(totalXP: number): number {
+    let level = 1;
+    let xpRequired = 0;
+
+    while (xpRequired <= totalXP) {
+      xpRequired += level * 100;
+      if (xpRequired <= totalXP) {
+        level++;
+      }
+    }
+
+    return level;
+  }
+
+  /**
+   * 次のレベルまでに必要なXPを計算
+   */
+  getXPForNextLevel(currentLevel: number): number {
+    return currentLevel * 100;
+  }
+
+  /**
+   * 現在のレベルの累積XPを計算
+   */
+  getTotalXPForLevel(level: number): number {
+    let total = 0;
+    for (let i = 1; i < level; i++) {
+      total += i * 100;
+    }
+    return total;
   }
 
   /**
