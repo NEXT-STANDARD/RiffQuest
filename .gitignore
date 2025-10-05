@@ -25,6 +25,21 @@ dist-electron
 *.sln
 *.sw?
 
+# Claude Code settings
+.claude/
+
+# Documentation (personal notes)
+docs/
+
+# POC/Test files
+poc/
+
+# Backup files
+*.bak
+*.backup
+*.old
+*.tmp
+
 # Database
 data/
 *.db
