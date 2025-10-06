@@ -5,9 +5,11 @@
 
 import Database from 'better-sqlite3';
 import path from 'path';
+import fs from 'fs';
 
 // データベースファイルのパス
 const DB_PATH = path.join(process.cwd(), 'data', 'riffquest.db');
+const BACKUP_DIR = path.join(process.cwd(), 'data', 'backups');
 
 export interface Session {
   id?: number;
@@ -41,10 +43,14 @@ export class DatabaseManager {
 
   constructor() {
     // データディレクトリを作成
-    const fs = require('fs');
     const dataDir = path.join(process.cwd(), 'data');
     if (!fs.existsSync(dataDir)) {
       fs.mkdirSync(dataDir, { recursive: true });
+    }
+
+    // バックアップディレクトリを作成
+    if (!fs.existsSync(BACKUP_DIR)) {
+      fs.mkdirSync(BACKUP_DIR, { recursive: true });
     }
 
     // データベース接続
@@ -54,6 +60,12 @@ export class DatabaseManager {
     console.log('[Database] 接続成功:', DB_PATH);
 
     this.initTables();
+
+    // 起動時に自動バックアップ
+    this.autoBackup();
+
+    // 毎日0時に自動バックアップ
+    this.scheduleDailyBackup();
   }
 
   /**
@@ -1026,6 +1038,126 @@ export class DatabaseManager {
     ];
 
     return achievements;
+  }
+
+  /**
+   * データベースをバックアップ
+   */
+  createBackup(): { success: boolean; message: string; filename?: string } {
+    try {
+      const now = new Date();
+      const timestamp = now.toISOString()
+        .replace(/:/g, '-')
+        .replace(/\..+/, '')
+        .replace('T', '-');
+      const filename = `riffquest-backup-${timestamp}.db`;
+      const backupPath = path.join(BACKUP_DIR, filename);
+
+      // データベースファイルをコピー
+      fs.copyFileSync(DB_PATH, backupPath);
+
+      console.log('[Backup] バックアップ作成:', filename);
+
+      // 古いバックアップを削除（最新30個まで保持）
+      this.cleanupOldBackups(30);
+
+      return {
+        success: true,
+        message: 'バックアップを作成しました',
+        filename
+      };
+    } catch (error: any) {
+      console.error('[Backup] エラー:', error);
+      return {
+        success: false,
+        message: `バックアップ失敗: ${error.message}`
+      };
+    }
+  }
+
+  /**
+   * 古いバックアップファイルを削除
+   */
+  private cleanupOldBackups(keepCount: number) {
+    try {
+      const files = fs.readdirSync(BACKUP_DIR)
+        .filter(file => file.startsWith('riffquest-backup-') && file.endsWith('.db'))
+        .map(file => ({
+          name: file,
+          path: path.join(BACKUP_DIR, file),
+          mtime: fs.statSync(path.join(BACKUP_DIR, file)).mtime
+        }))
+        .sort((a, b) => b.mtime.getTime() - a.mtime.getTime());
+
+      // 古いファイルを削除
+      const filesToDelete = files.slice(keepCount);
+      filesToDelete.forEach(file => {
+        fs.unlinkSync(file.path);
+        console.log('[Backup] 古いバックアップ削除:', file.name);
+      });
+    } catch (error) {
+      console.error('[Backup] クリーンアップエラー:', error);
+    }
+  }
+
+  /**
+   * 自動バックアップ（起動時）
+   */
+  private autoBackup() {
+    // データベースファイルが存在する場合のみバックアップ
+    if (fs.existsSync(DB_PATH)) {
+      const result = this.createBackup();
+      if (result.success) {
+        console.log('[Backup] 自動バックアップ完了:', result.filename);
+      }
+    }
+  }
+
+  /**
+   * 毎日0時に自動バックアップをスケジュール
+   */
+  private scheduleDailyBackup() {
+    const scheduleNextBackup = () => {
+      const now = new Date();
+      const tomorrow = new Date(now);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      tomorrow.setHours(0, 0, 0, 0);
+      const msUntilMidnight = tomorrow.getTime() - now.getTime();
+
+      setTimeout(() => {
+        this.createBackup();
+        scheduleNextBackup(); // 次の日のバックアップをスケジュール
+      }, msUntilMidnight);
+
+      console.log(`[Backup] 次回自動バックアップ: ${tomorrow.toLocaleString('ja-JP')}`);
+    };
+
+    scheduleNextBackup();
+  }
+
+  /**
+   * バックアップ一覧を取得
+   */
+  listBackups(): { filename: string; size: number; created: Date }[] {
+    try {
+      const files = fs.readdirSync(BACKUP_DIR)
+        .filter(file => file.startsWith('riffquest-backup-') && file.endsWith('.db'))
+        .map(file => {
+          const filePath = path.join(BACKUP_DIR, file);
+          const stats = fs.statSync(filePath);
+          return {
+            filename: file,
+            size: stats.size,
+            created: stats.mtime
+          };
+        })
+        .sort((a, b) => b.created.getTime() - a.created.getTime());
+
+      return files;
+    } catch (error) {
+      console.error('[Backup] 一覧取得エラー:', error);
+      return [];
+    }
   }
 
   /**

@@ -34,6 +34,7 @@ export function StaminaGauge() {
   });
   const [activeBoost, setActiveBoost] = useState<XPBoost | null>(null);
   const [showBoostMenu, setShowBoostMenu] = useState(false);
+  const [backupStatus, setBackupStatus] = useState<string>('');
 
   useEffect(() => {
     fetchStamina();
@@ -96,6 +97,28 @@ export function StaminaGauge() {
     const minutes = Math.floor(diffMs / 60000);
     const seconds = Math.floor((diffMs % 60000) / 1000);
     return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+  };
+
+  const createBackup = async () => {
+    try {
+      setBackupStatus('バックアップ作成中...');
+      const response = await fetch(`${API_URL}/api/backup/create`, {
+        method: 'POST'
+      });
+      const result = await response.json();
+
+      if (result.success) {
+        setBackupStatus(`✅ ${result.message}`);
+        setTimeout(() => setBackupStatus(''), 3000);
+      } else {
+        setBackupStatus(`❌ ${result.message}`);
+        setTimeout(() => setBackupStatus(''), 5000);
+      }
+    } catch (error) {
+      console.error('バックアップエラー:', error);
+      setBackupStatus('❌ バックアップ失敗');
+      setTimeout(() => setBackupStatus(''), 5000);
+    }
   };
 
   const staminaPercentage = (stamina.stamina / stamina.max_stamina) * 100;
@@ -170,6 +193,20 @@ export function StaminaGauge() {
               </button>
             </div>
           </div>
+        )}
+      </div>
+
+      {/* バックアップボタン */}
+      <div className="backup-controls">
+        <button
+          className="backup-btn"
+          onClick={createBackup}
+          disabled={!!backupStatus}
+        >
+          💾 手動バックアップ
+        </button>
+        {backupStatus && (
+          <div className="backup-status">{backupStatus}</div>
         )}
       </div>
     </div>

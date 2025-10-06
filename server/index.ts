@@ -256,6 +256,28 @@ app.get('/api/boost/active', (_req, res) => {
   }
 });
 
+// バックアップAPI
+app.post('/api/backup/create', (_req, res) => {
+  try {
+    const result = db.createBackup();
+    res.json(result);
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+app.get('/api/backup/list', (_req, res) => {
+  try {
+    const backups = db.listBackups();
+    res.json({ backups });
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Socket.io接続処理
 io.on('connection', (socket) => {
   console.log('[Socket.io] クライアント接続:', socket.id);
