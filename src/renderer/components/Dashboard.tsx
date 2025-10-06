@@ -6,6 +6,7 @@
 import { useState, useEffect } from 'react';
 import { supabase, isSupabaseEnabled } from '../../lib/supabase';
 import { UsernameModal } from './UsernameModal';
+import { StaminaGauge } from './StaminaGauge';
 import './Dashboard.css';
 
 const API_URL = 'http://localhost:3030';
@@ -219,6 +220,9 @@ export function Dashboard() {
 
   return (
     <div className="dashboard">
+      {/* スタミナゲージ */}
+      <StaminaGauge />
+
       {/* プロフィールカード */}
       <div className="profile-card">
         <div className="profile-header">

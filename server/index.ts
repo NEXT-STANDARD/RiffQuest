@@ -203,6 +203,59 @@ app.get('/api/achievements', (_req, res) => {
   }
 });
 
+// スタミナAPI
+app.get('/api/stamina', (_req, res) => {
+  try {
+    const profile = db.getUserProfile();
+    res.json({
+      stamina: profile.stamina,
+      max_stamina: profile.max_stamina,
+      minutes_until_next_recovery: profile.minutes_until_next_stamina,
+      stamina_full: profile.stamina_full
+    });
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// ブーストAPI
+app.post('/api/boost/activate', (_req, res) => {
+  try {
+    const { type } = _req.body;
+
+    if (type !== 'small' && type !== 'large') {
+      return res.status(400).json({
+        success: false,
+        error: 'Invalid boost type. Use "small" or "large".'
+      });
+    }
+
+    const result = db.activateBoost(type);
+
+    if (result.success) {
+      // 統計を更新してクライアントに送信
+      const profile = db.getUserProfile();
+      io.emit('boost:activated', { boost: result.boost, profile });
+    }
+
+    res.json(result);
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+app.get('/api/boost/active', (_req, res) => {
+  try {
+    const boost = db.getActiveBoost();
+    res.json({ boost });
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Socket.io接続処理
 io.on('connection', (socket) => {
   console.log('[Socket.io] クライアント接続:', socket.id);

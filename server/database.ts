@@ -26,6 +26,16 @@ export interface DailyStats {
   total_xp: number;
 }
 
+export interface XPBoost {
+  id?: number;
+  boost_type: 'small' | 'large'; // 40pt or 60pt
+  multiplier: number; // 1.5x or 2.0x
+  duration_minutes: number; // 15min or 30min
+  activated_at: string;
+  expires_at: string;
+  active: boolean;
+}
+
 export class DatabaseManager {
   private db: Database.Database;
 
@@ -59,6 +69,21 @@ export class DatabaseManager {
         end_time TEXT,
         duration_seconds INTEGER DEFAULT 0,
         xp_earned INTEGER DEFAULT 0,
+        boost_multiplier REAL DEFAULT 1.0,
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+    // XPブーストテーブル
+    this.db.exec(`
+      CREATE TABLE IF NOT EXISTS xp_boosts (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        boost_type TEXT NOT NULL,
+        multiplier REAL NOT NULL,
+        duration_minutes INTEGER NOT NULL,
+        activated_at TEXT NOT NULL,
+        expires_at TEXT NOT NULL,
+        active INTEGER DEFAULT 1,
         created_at TEXT DEFAULT CURRENT_TIMESTAMP
       )
     `);
@@ -71,6 +96,9 @@ export class DatabaseManager {
         level INTEGER DEFAULT 1,
         current_streak INTEGER DEFAULT 0,
         best_streak INTEGER DEFAULT 0,
+        stamina INTEGER DEFAULT 240,
+        max_stamina INTEGER DEFAULT 240,
+        last_stamina_update TEXT DEFAULT CURRENT_TIMESTAMP,
         updated_at TEXT DEFAULT CURRENT_TIMESTAMP
       )
     `);
@@ -79,13 +107,69 @@ export class DatabaseManager {
     const userExists = this.db.prepare('SELECT id FROM user_profile WHERE id = 1').get();
     if (!userExists) {
       this.db.prepare(`
-        INSERT INTO user_profile (id, total_xp, level, current_streak, best_streak)
-        VALUES (1, 0, 1, 0, 0)
+        INSERT INTO user_profile (id, total_xp, level, current_streak, best_streak, stamina, max_stamina, last_stamina_update)
+        VALUES (1, 0, 1, 0, 0, 240, 240, CURRENT_TIMESTAMP)
       `).run();
       console.log('[Database] 初期ユーザープロフィール作成');
     }
 
+    // スタミナカラムのマイグレーション（既存DBへの対応）
+    this.migrateStaminaColumns();
+    this.migrateBoostColumns();
+
     console.log('[Database] テーブル初期化完了');
+  }
+
+  /**
+   * スタミナカラムのマイグレーション
+   */
+  private migrateStaminaColumns() {
+    try {
+      const columns = this.db.pragma('table_info(user_profile)') as any[];
+      const hasStamina = columns.some(col => col.name === 'stamina');
+
+      if (!hasStamina) {
+        console.log('[Database] スタミナカラムを追加中...');
+        const now = new Date().toISOString();
+
+        this.db.exec(`
+          ALTER TABLE user_profile ADD COLUMN stamina INTEGER DEFAULT 240;
+          ALTER TABLE user_profile ADD COLUMN max_stamina INTEGER DEFAULT 240;
+          ALTER TABLE user_profile ADD COLUMN last_stamina_update TEXT;
+        `);
+
+        // 既存のユーザーに対して初期値を設定
+        this.db.prepare(`
+          UPDATE user_profile
+          SET last_stamina_update = ?
+          WHERE id = 1 AND last_stamina_update IS NULL
+        `).run(now);
+
+        console.log('[Database] スタミナカラム追加完了');
+      }
+    } catch (error) {
+      console.error('[Database] マイグレーションエラー:', error);
+    }
+  }
+
+  /**
+   * ブーストカラムのマイグレーション
+   */
+  private migrateBoostColumns() {
+    try {
+      const columns = this.db.pragma('table_info(sessions)') as any[];
+      const hasBoostMultiplier = columns.some(col => col.name === 'boost_multiplier');
+
+      if (!hasBoostMultiplier) {
+        console.log('[Database] boost_multiplierカラムを追加中...');
+        this.db.exec(`
+          ALTER TABLE sessions ADD COLUMN boost_multiplier REAL DEFAULT 1.0;
+        `);
+        console.log('[Database] boost_multiplierカラム追加完了');
+      }
+    } catch (error) {
+      console.error('[Database] boost_multiplierマイグレーションエラー:', error);
+    }
   }
 
   /**
@@ -107,26 +191,121 @@ export class DatabaseManager {
    */
   endSession(sessionId: number, durationSeconds: number): void {
     const now = new Date().toISOString();
-    const xpEarned = this.calculateXP(durationSeconds);
+    const xpResult = this.calculateXP(durationSeconds);
 
     this.db.prepare(`
       UPDATE sessions
-      SET end_time = ?, duration_seconds = ?, xp_earned = ?
+      SET end_time = ?, duration_seconds = ?, xp_earned = ?, boost_multiplier = ?
       WHERE id = ?
-    `).run(now, durationSeconds, xpEarned, sessionId);
+    `).run(now, durationSeconds, xpResult.totalXP, xpResult.multiplier, sessionId);
 
     // ユーザーXPを更新
-    this.addXP(xpEarned);
+    this.addXP(xpResult.totalXP);
 
-    console.log('[Database] セッション終了:', sessionId, '時間:', durationSeconds, 'XP:', xpEarned);
+    const boostInfo = xpResult.multiplier > 1 ? ` (Base: ${xpResult.baseXP} × ${xpResult.multiplier})` : '';
+    console.log('[Database] セッション終了:', sessionId, '時間:', durationSeconds, 'XP:', xpResult.totalXP + boostInfo);
   }
 
   /**
-   * XP計算（1分 = 10 XP）
+   * XP計算（1分 = 10 XP）+ ブースト倍率適用
    */
-  private calculateXP(durationSeconds: number): number {
+  private calculateXP(durationSeconds: number): { baseXP: number; multiplier: number; totalXP: number } {
     const minutes = Math.floor(durationSeconds / 60);
-    return minutes * 10;
+    const baseXP = minutes * 10;
+    const multiplier = this.getActiveBoostMultiplier();
+    const totalXP = Math.floor(baseXP * multiplier);
+
+    return { baseXP, multiplier, totalXP };
+  }
+
+  /**
+   * アクティブなブーストの倍率を取得
+   */
+  getActiveBoostMultiplier(): number {
+    this.updateBoostStatus();
+
+    const boost = this.db.prepare(`
+      SELECT multiplier FROM xp_boosts
+      WHERE active = 1 AND datetime(expires_at) > datetime('now')
+      ORDER BY multiplier DESC
+      LIMIT 1
+    `).get() as any;
+
+    return boost ? boost.multiplier : 1.0;
+  }
+
+  /**
+   * アクティブなブースト情報を取得
+   */
+  getActiveBoost(): XPBoost | null {
+    this.updateBoostStatus();
+
+    const boost = this.db.prepare(`
+      SELECT * FROM xp_boosts
+      WHERE active = 1 AND datetime(expires_at) > datetime('now')
+      ORDER BY multiplier DESC
+      LIMIT 1
+    `).get() as XPBoost | undefined;
+
+    return boost || null;
+  }
+
+  /**
+   * ブーストの有効期限をチェックして更新
+   */
+  private updateBoostStatus() {
+    this.db.prepare(`
+      UPDATE xp_boosts
+      SET active = 0
+      WHERE active = 1 AND datetime(expires_at) <= datetime('now')
+    `).run();
+  }
+
+  /**
+   * XPブーストを有効化
+   */
+  activateBoost(boostType: 'small' | 'large'): { success: boolean; message: string; boost?: XPBoost } {
+    const cost = boostType === 'small' ? 40 : 60;
+    const multiplier = boostType === 'small' ? 1.5 : 2.0;
+    const duration = boostType === 'small' ? 15 : 30;
+
+    // スタミナ消費チェック
+    if (!this.consumeStamina(cost)) {
+      return {
+        success: false,
+        message: `スタミナが不足しています（必要: ${cost}pt）`
+      };
+    }
+
+    // 既存のアクティブなブーストをチェック
+    const existingBoost = this.getActiveBoost();
+    if (existingBoost) {
+      // スタミナを返却
+      this.db.prepare('UPDATE user_profile SET stamina = stamina + ? WHERE id = 1').run(cost);
+      return {
+        success: false,
+        message: '既にブーストがアクティブです'
+      };
+    }
+
+    // ブーストを作成
+    const now = new Date();
+    const expiresAt = new Date(now.getTime() + duration * 60 * 1000);
+
+    const result = this.db.prepare(`
+      INSERT INTO xp_boosts (boost_type, multiplier, duration_minutes, activated_at, expires_at, active)
+      VALUES (?, ?, ?, ?, ?, 1)
+    `).run(boostType, multiplier, duration, now.toISOString(), expiresAt.toISOString());
+
+    const boost = this.db.prepare('SELECT * FROM xp_boosts WHERE id = ?').get(result.lastInsertRowid) as XPBoost;
+
+    console.log(`[Boost] ${boostType}ブースト発動: ${multiplier}x (${duration}分間)`);
+
+    return {
+      success: true,
+      message: `${multiplier}x XPブーストを${duration}分間発動しました！`,
+      boost
+    };
   }
 
   /**
@@ -205,9 +384,64 @@ export class DatabaseManager {
   }
 
   /**
+   * スタミナ回復処理（8分に1pt）
+   */
+  private updateStamina() {
+    const profile = this.db.prepare('SELECT stamina, max_stamina, last_stamina_update FROM user_profile WHERE id = 1').get() as any;
+
+    if (!profile) return;
+
+    const now = new Date();
+    const lastUpdate = new Date(profile.last_stamina_update);
+    const minutesPassed = Math.floor((now.getTime() - lastUpdate.getTime()) / (1000 * 60));
+    const staminaToRecover = Math.floor(minutesPassed / 8);
+
+    if (staminaToRecover > 0 && profile.stamina < profile.max_stamina) {
+      const newStamina = Math.min(profile.stamina + staminaToRecover, profile.max_stamina);
+      const updateTime = new Date(lastUpdate.getTime() + staminaToRecover * 8 * 60 * 1000).toISOString();
+
+      this.db.prepare(`
+        UPDATE user_profile
+        SET stamina = ?,
+            last_stamina_update = ?
+        WHERE id = 1
+      `).run(newStamina, updateTime);
+
+      console.log(`[Stamina] 回復: ${profile.stamina} → ${newStamina} (+${staminaToRecover}pt)`);
+    }
+  }
+
+  /**
+   * スタミナを消費
+   */
+  consumeStamina(amount: number): boolean {
+    this.updateStamina();
+
+    const profile = this.db.prepare('SELECT stamina FROM user_profile WHERE id = 1').get() as any;
+
+    if (!profile || profile.stamina < amount) {
+      return false;
+    }
+
+    // スタミナ消費と同時にlast_stamina_updateを現在時刻に更新
+    const now = new Date().toISOString();
+    this.db.prepare(`
+      UPDATE user_profile
+      SET stamina = stamina - ?,
+          last_stamina_update = ?
+      WHERE id = 1
+    `).run(amount, now);
+
+    console.log(`[Stamina] 消費: ${amount}pt (残り: ${profile.stamina - amount}pt)`);
+    return true;
+  }
+
+  /**
    * ユーザープロフィールを取得
    */
   getUserProfile() {
+    this.updateStamina();
+
     const profile = this.db.prepare('SELECT * FROM user_profile WHERE id = 1').get() as any;
 
     if (profile) {
@@ -218,11 +452,25 @@ export class DatabaseManager {
       const currentLevelProgress = profile.total_xp - currentLevelTotalXP;
       const progressPercentage = (currentLevelProgress / xpForNextLevel) * 100;
 
+      // 次回スタミナ回復までの時間を計算
+      const lastUpdate = new Date(profile.last_stamina_update);
+      const now = new Date();
+      const minutesSinceUpdate = Math.floor((now.getTime() - lastUpdate.getTime()) / (1000 * 60));
+      const minutesUntilNextRecovery = profile.stamina < profile.max_stamina
+        ? 8 - (minutesSinceUpdate % 8)
+        : 0;
+
+      // アクティブなブースト情報
+      const activeBoost = this.getActiveBoost();
+
       return {
         ...profile,
         current_level_xp: currentLevelProgress,
         xp_for_next_level: xpForNextLevel,
-        progress_percentage: Math.min(progressPercentage, 100)
+        progress_percentage: Math.min(progressPercentage, 100),
+        minutes_until_next_stamina: minutesUntilNextRecovery,
+        stamina_full: profile.stamina >= profile.max_stamina,
+        active_boost: activeBoost
       };
     }
 
