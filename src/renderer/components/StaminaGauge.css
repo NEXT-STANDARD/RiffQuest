@@ -4,11 +4,12 @@
  */
 
 .stamina-container {
-  background: linear-gradient(135deg, rgba(45, 55, 72, 0.9), rgba(26, 32, 44, 0.9));
+  background: linear-gradient(135deg, rgba(224, 242, 254, 0.9), rgba(240, 249, 255, 0.9));
   border-radius: 12px;
   padding: 16px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
   margin-bottom: 16px;
+  border: 1px solid rgba(59, 130, 246, 0.2);
 }
 
 /* スタミナゲージ */
@@ -22,7 +23,7 @@
   gap: 8px;
   margin-bottom: 8px;
   font-size: 14px;
-  color: #e2e8f0;
+  color: #1e3a8a;
 }
 
 .stamina-icon {
@@ -41,10 +42,10 @@
 
 .stamina-bar {
   height: 12px;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(203, 213, 225, 0.4);
   border-radius: 6px;
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(148, 163, 184, 0.3);
 }
 
 .stamina-fill {
@@ -57,7 +58,7 @@
 .stamina-recovery {
   margin-top: 6px;
   font-size: 12px;
-  color: #94a3b8;
+  color: #475569;
   text-align: right;
 }
 
@@ -192,12 +193,12 @@
 .boost-type {
   font-weight: 700;
   font-size: 14px;
-  color: #fff;
+  color: #1e3a8a;
 }
 
 .boost-details {
   font-size: 12px;
-  color: #cbd5e1;
+  color: #475569;
 }
 
 .boost-cost {
@@ -245,11 +246,11 @@
 .backup-status {
   margin-top: 8px;
   padding: 8px 12px;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(203, 213, 225, 0.3);
   border-radius: 6px;
   font-size: 12px;
   text-align: center;
-  color: #cbd5e1;
+  color: #475569;
   animation: fade-in 0.2s ease-out;
 }
 
