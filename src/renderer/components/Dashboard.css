@@ -2,17 +2,17 @@
   max-width: 1400px;
   margin: 0 auto;
   padding: 20px;
-  background: #1a1a1a;
+  background: #f0f9ff;
   min-height: 100vh;
 }
 
 /* プロフィールカード */
 .profile-card {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
   border-radius: 20px;
   padding: 30px;
   margin-bottom: 30px;
-  box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
+  box-shadow: 0 8px 32px rgba(59, 130, 246, 0.3);
 }
 
 .profile-header {
@@ -55,10 +55,10 @@
 
 .xp-fill {
   height: 100%;
-  background: linear-gradient(90deg, #ffd700, #ffed4e);
+  background: linear-gradient(90deg, #fbbf24, #fcd34d);
   border-radius: 6px;
   transition: width 0.5s ease;
-  box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+  box-shadow: 0 0 10px rgba(251, 191, 36, 0.5);
 }
 
 .xp-text {
@@ -86,15 +86,15 @@
   display: block;
   margin: 20px auto 0;
   padding: 14px 32px;
-  background: linear-gradient(135deg, #ffd700, #ffed4e);
-  color: #333;
+  background: linear-gradient(135deg, #fbbf24, #fcd34d);
+  color: #1e3a8a;
   border: none;
   border-radius: 12px;
   font-size: 18px;
   font-weight: bold;
   cursor: pointer;
   transition: transform 0.2s, box-shadow 0.3s;
-  box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
+  box-shadow: 0 4px 12px rgba(251, 191, 36, 0.3);
   text-align: center;
   text-decoration: none;
   width: fit-content;
@@ -103,7 +103,7 @@
 .submit-score-btn:hover,
 .leaderboard-link:hover {
   transform: translateY(-3px);
-  box-shadow: 0 6px 20px rgba(255, 215, 0, 0.5);
+  box-shadow: 0 6px 20px rgba(251, 191, 36, 0.5);
 }
 
 .submit-score-btn:active,
@@ -147,7 +147,7 @@
 }
 
 .daily-goals-section h3 {
-  color: #ffffff;
+  color: #1e3a8a;
   margin-bottom: 20px;
   font-size: 24px;
 }
@@ -159,7 +159,7 @@
 }
 
 .goal-card {
-  background: #2c2c2c;
+  background: #ffffff;
   border-radius: 12px;
   padding: 20px;
   display: flex;
@@ -170,12 +170,12 @@
 
 .goal-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 8px 24px rgba(102, 126, 234, 0.2);
+  box-shadow: 0 8px 24px rgba(59, 130, 246, 0.2);
 }
 
 .goal-card.completed {
   border-color: #51cf66;
-  background: linear-gradient(135deg, #2c2c2c 0%, #1e3a1e 100%);
+  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
 }
 
 .goal-icon {
@@ -188,20 +188,20 @@
 
 .goal-content h4 {
   margin: 0 0 5px 0;
-  color: #ffffff;
+  color: #1e3a8a;
   font-size: 16px;
 }
 
 .goal-content p {
   margin: 0 0 10px 0;
-  color: #aaaaaa;
+  color: #475569;
   font-size: 13px;
 }
 
 .goal-progress {
   width: 100%;
   height: 6px;
-  background: #444;
+  background: #e0f2fe;
   border-radius: 3px;
   overflow: hidden;
   margin-bottom: 10px;
@@ -209,7 +209,7 @@
 
 .goal-progress-bar {
   height: 100%;
-  background: linear-gradient(90deg, #667eea, #764ba2);
+  background: linear-gradient(90deg, #3b82f6, #1d4ed8);
   border-radius: 3px;
   transition: width 0.5s ease;
 }
@@ -231,14 +231,14 @@
 }
 
 .goal-xp {
-  color: #ffd700;
+  color: #fbbf24;
   font-weight: bold;
   font-size: 14px;
 }
 
 /* 実績セクション */
 .achievements-section h3 {
-  color: #ffffff;
+  color: #1e3a8a;
   margin-bottom: 20px;
   font-size: 24px;
 }
@@ -250,7 +250,7 @@
 }
 
 .achievement-card {
-  background: #2c2c2c;
+  background: #ffffff;
   border-radius: 12px;
   padding: 20px;
   text-align: center;
@@ -284,7 +284,7 @@
 
 .achievement-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 8px 24px rgba(102, 126, 234, 0.2);
+  box-shadow: 0 8px 24px rgba(59, 130, 246, 0.2);
 }
 
 .achievement-icon {
@@ -294,13 +294,13 @@
 
 .achievement-content h4 {
   margin: 0 0 5px 0;
-  color: #ffffff;
+  color: #1e3a8a;
   font-size: 16px;
 }
 
 .achievement-content p {
   margin: 0 0 10px 0;
-  color: #aaaaaa;
+  color: #475569;
   font-size: 13px;
 }
 
