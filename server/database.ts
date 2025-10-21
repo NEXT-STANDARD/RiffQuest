@@ -1161,6 +1161,44 @@ export class DatabaseManager {
   }
 
   /**
+   * データベースを完全にリセット（全データ削除）
+   */
+  resetDatabase(): { success: boolean; message: string; backupFilename?: string } {
+    try {
+      // リセット前にバックアップを作成
+      const backupResult = this.createBackup();
+
+      console.log('[Database] データベースリセット開始...');
+
+      // 全テーブルのデータを削除
+      this.db.exec('DELETE FROM sessions');
+      this.db.exec('DELETE FROM xp_boosts');
+      this.db.exec('DELETE FROM user_profile');
+
+      // ユーザープロフィールを初期化
+      const now = new Date().toISOString();
+      this.db.prepare(`
+        INSERT INTO user_profile (id, total_xp, level, current_streak, best_streak, stamina, max_stamina, last_stamina_update)
+        VALUES (1, 0, 1, 0, 0, 240, 240, ?)
+      `).run(now);
+
+      console.log('[Database] データベースリセット完了');
+
+      return {
+        success: true,
+        message: 'データベースをリセットしました。バックアップは保持されています。',
+        backupFilename: backupResult.filename
+      };
+    } catch (error: any) {
+      console.error('[Database] リセットエラー:', error);
+      return {
+        success: false,
+        message: `リセット失敗: ${error.message}`
+      };
+    }
+  }
+
+  /**
    * データベース接続を閉じる
    */
   close() {
