@@ -4,6 +4,7 @@ import { Dashboard } from './components/Dashboard';
 import { Leaderboard } from './components/Leaderboard';
 import { Achievements } from './components/Achievements';
 import { History } from './components/History';
+import { Settings } from './components/Settings';
 import './App.css';
 
 function App() {
@@ -21,6 +22,7 @@ function App() {
             <Link to="/leaderboard">🌍 ランキング</Link>
             <Link to="/obs">OBS接続</Link>
             <Link to="/history">練習履歴</Link>
+            <Link to="/settings">⚙️ 設定</Link>
           </nav>
         </header>
 
@@ -31,6 +33,7 @@ function App() {
             <Route path="/leaderboard" element={<Leaderboard />} />
             <Route path="/obs" element={<OBSConnection />} />
             <Route path="/history" element={<History />} />
+            <Route path="/settings" element={<Settings />} />
           </Routes>
         </main>
       </div>

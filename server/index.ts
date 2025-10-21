@@ -278,6 +278,28 @@ app.get('/api/backup/list', (_req, res) => {
   }
 });
 
+// データベースリセットAPI
+app.post('/api/database/reset', (_req, res) => {
+  try {
+    const result = db.resetDatabase();
+
+    if (result.success) {
+      // リセット後の統計をすべてのクライアントに送信
+      const stats = db.getTodayStats();
+      const profile = db.getUserProfile();
+      io.emit('stats:updated', { today: stats, profile });
+      io.emit('database:reset');
+    }
+
+    res.json(result);
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
 // Socket.io接続処理
 io.on('connection', (socket) => {
   console.log('[Socket.io] クライアント接続:', socket.id);
