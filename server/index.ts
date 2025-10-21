@@ -25,6 +25,7 @@ const db = new DatabaseManager();
 let obsConnected = false;
 let currentSession: number | null = null;
 let sessionStartTime: number | null = null;
+let currentBPM: number | null = null;
 
 // ミドルウェア
 app.use(cors());
@@ -311,6 +312,19 @@ io.on('connection', (socket) => {
   const stats = db.getTodayStats();
   const profile = db.getUserProfile();
   socket.emit('stats:updated', { today: stats, profile });
+
+  // 現在のBPMを送信
+  if (currentBPM) {
+    socket.emit('bpm:updated', { bpm: currentBPM });
+  }
+
+  // BPM更新イベントを受信
+  socket.on('bpm:detected', (data: { bpm: number }) => {
+    currentBPM = data.bpm;
+    console.log('[BPM] 検出:', currentBPM);
+    // 他のクライアントにブロードキャスト
+    io.emit('bpm:updated', { bpm: currentBPM });
+  });
 
   socket.on('disconnect', () => {
     console.log('[Socket.io] クライアント切断:', socket.id);

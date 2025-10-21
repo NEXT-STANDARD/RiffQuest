@@ -5,6 +5,7 @@ import { Leaderboard } from './components/Leaderboard';
 import { Achievements } from './components/Achievements';
 import { History } from './components/History';
 import { Settings } from './components/Settings';
+import { BPMDetector } from './components/BPMDetector';
 import './App.css';
 
 function App() {
@@ -20,6 +21,7 @@ function App() {
             <Link to="/">ダッシュボード</Link>
             <Link to="/achievements">🏆 実績</Link>
             <Link to="/leaderboard">🌍 ランキング</Link>
+            <Link to="/bpm">🎵 BPM検出</Link>
             <Link to="/obs">OBS接続</Link>
             <Link to="/history">練習履歴</Link>
             <Link to="/settings">⚙️ 設定</Link>
@@ -31,6 +33,7 @@ function App() {
             <Route path="/" element={<Dashboard />} />
             <Route path="/achievements" element={<Achievements />} />
             <Route path="/leaderboard" element={<Leaderboard />} />
+            <Route path="/bpm" element={<BPMDetector />} />
             <Route path="/obs" element={<OBSConnection />} />
             <Route path="/history" element={<History />} />
             <Route path="/settings" element={<Settings />} />

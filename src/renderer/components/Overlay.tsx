@@ -15,6 +15,7 @@ export function Overlay() {
   const [isActive, setIsActive] = useState(false);
   const [connected, setConnected] = useState(false);
   const [socket, setSocket] = useState<Socket | null>(null);
+  const [currentBPM, setCurrentBPM] = useState<number | null>(null);
 
   useEffect(() => {
     console.log('[Overlay] 初期化開始');
@@ -52,6 +53,11 @@ export function Overlay() {
 
     newSocket.on('obs:status', (data) => {
       console.log('[Overlay] OBS状態:', data);
+    });
+
+    newSocket.on('bpm:updated', (data: { bpm: number }) => {
+      console.log('[Overlay] BPM更新:', data.bpm);
+      setCurrentBPM(data.bpm);
     });
 
     setSocket(newSocket);
@@ -110,9 +116,12 @@ export function Overlay() {
         </div>
 
         <div className="stat-card">
-          <div className="stat-label">Socket.io</div>
-          <div className="stat-value" style={{ fontSize: '14px' }}>
-            {connected ? '✅' : '❌'}
+          <div className="stat-label">BPM</div>
+          <div className="stat-value" style={{
+            fontSize: currentBPM ? '24px' : '14px',
+            color: currentBPM ? '#fbbf24' : '#ffffff'
+          }}>
+            {currentBPM || '---'}
           </div>
         </div>
 
