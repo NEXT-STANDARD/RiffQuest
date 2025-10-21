@@ -103,17 +103,17 @@ export function Achievements() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50">
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* ヘッダー */}
         <div className="mb-8 text-center">
           <div className="inline-block mb-4">
             <div className="text-7xl mb-4 animate-bounce">🏆</div>
           </div>
-          <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-purple-400 via-pink-500 to-purple-600 bg-clip-text text-transparent mb-4">
+          <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-purple-600 via-pink-600 to-purple-700 bg-clip-text text-transparent mb-4">
             実績コレクション
           </h1>
-          <p className="text-gray-400 text-lg max-w-2xl mx-auto">
+          <p className="text-gray-600 text-lg max-w-2xl mx-auto">
             練習を続けて実績を解除しよう。レア度が高いほど達成が困難！
           </p>
         </div>
@@ -122,16 +122,16 @@ export function Achievements() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
           {/* 総合達成率 */}
           <div className="relative group">
-            <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl blur-xl opacity-50 group-hover:opacity-75 transition-opacity"></div>
-            <div className="relative bg-gray-800/90 backdrop-blur-sm rounded-2xl p-6 border border-purple-500/20">
+            <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl blur-xl opacity-20 group-hover:opacity-30 transition-opacity"></div>
+            <div className="relative bg-white/90 backdrop-blur-sm rounded-2xl p-6 border border-purple-500/20 shadow-lg">
               <div className="flex items-center justify-between mb-4">
-                <span className="text-purple-300 text-sm font-semibold uppercase tracking-wide">達成率</span>
+                <span className="text-purple-700 text-sm font-semibold uppercase tracking-wide">達成率</span>
                 <span className="text-4xl">📊</span>
               </div>
-              <div className="text-5xl font-bold text-white mb-3">
-                {completionPercentage.toFixed(1)}<span className="text-2xl text-purple-300">%</span>
+              <div className="text-5xl font-bold text-gray-800 mb-3">
+                {completionPercentage.toFixed(1)}<span className="text-2xl text-purple-600">%</span>
               </div>
-              <div className="w-full bg-gray-700 rounded-full h-3 overflow-hidden">
+              <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
                 <div
                   className="bg-gradient-to-r from-purple-500 via-pink-500 to-purple-600 h-3 rounded-full transition-all duration-700 ease-out relative"
                   style={{ width: `${completionPercentage}%` }}
@@ -144,16 +144,16 @@ export function Achievements() {
 
           {/* 解除済み */}
           <div className="relative group">
-            <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-cyan-600 rounded-2xl blur-xl opacity-50 group-hover:opacity-75 transition-opacity"></div>
-            <div className="relative bg-gray-800/90 backdrop-blur-sm rounded-2xl p-6 border border-blue-500/20">
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-cyan-600 rounded-2xl blur-xl opacity-20 group-hover:opacity-30 transition-opacity"></div>
+            <div className="relative bg-white/90 backdrop-blur-sm rounded-2xl p-6 border border-blue-500/20 shadow-lg">
               <div className="flex items-center justify-between mb-4">
-                <span className="text-blue-300 text-sm font-semibold uppercase tracking-wide">解除済み</span>
+                <span className="text-blue-700 text-sm font-semibold uppercase tracking-wide">解除済み</span>
                 <span className="text-4xl">✨</span>
               </div>
-              <div className="text-5xl font-bold text-white mb-1">
+              <div className="text-5xl font-bold text-gray-800 mb-1">
                 {completedCount}
               </div>
-              <p className="text-blue-300 text-sm">
+              <p className="text-blue-600 text-sm">
                 全{totalCount}個中
               </p>
             </div>
@@ -161,16 +161,16 @@ export function Achievements() {
 
           {/* 未達成 */}
           <div className="relative group">
-            <div className="absolute inset-0 bg-gradient-to-r from-orange-600 to-red-600 rounded-2xl blur-xl opacity-50 group-hover:opacity-75 transition-opacity"></div>
-            <div className="relative bg-gray-800/90 backdrop-blur-sm rounded-2xl p-6 border border-orange-500/20">
+            <div className="absolute inset-0 bg-gradient-to-r from-orange-600 to-red-600 rounded-2xl blur-xl opacity-20 group-hover:opacity-30 transition-opacity"></div>
+            <div className="relative bg-white/90 backdrop-blur-sm rounded-2xl p-6 border border-orange-500/20 shadow-lg">
               <div className="flex items-center justify-between mb-4">
-                <span className="text-orange-300 text-sm font-semibold uppercase tracking-wide">未達成</span>
+                <span className="text-orange-700 text-sm font-semibold uppercase tracking-wide">未達成</span>
                 <span className="text-4xl">🎯</span>
               </div>
-              <div className="text-5xl font-bold text-white mb-1">
+              <div className="text-5xl font-bold text-gray-800 mb-1">
                 {totalCount - completedCount}
               </div>
-              <p className="text-orange-300 text-sm">
+              <p className="text-orange-600 text-sm">
                 挑戦しよう！
               </p>
             </div>
@@ -178,7 +178,7 @@ export function Achievements() {
         </div>
 
         {/* フィルター */}
-        <div className="bg-gray-800/50 backdrop-blur-sm rounded-2xl p-5 mb-8 border border-gray-700/50">
+        <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-5 mb-8 border border-blue-200/50 shadow-lg">
           <div className="flex flex-wrap gap-3">
             <FilterButton
               active={filter === 'all'}
@@ -241,7 +241,7 @@ export function Achievements() {
                   <div className={`relative rounded-2xl p-6 border-2 transition-all ${
                     achievement.completed
                       ? `bg-gradient-to-br ${config.bgGradient} backdrop-blur-sm ${config.border} ${config.glow} shadow-xl`
-                      : 'bg-gray-800/50 border-gray-700/50 backdrop-blur-sm'
+                      : 'bg-white/70 border-gray-300/50 backdrop-blur-sm shadow-md'
                   }`}>
 
                     {/* レア度バッジ */}
@@ -274,7 +274,7 @@ export function Achievements() {
                     {/* タイトル */}
                     <h3 className={`text-xl font-bold mb-2 ${
                       achievement.completed
-                        ? 'text-white'
+                        ? 'text-gray-800'
                         : 'text-gray-500'
                     }`}>
                       {achievement.title}
@@ -283,8 +283,8 @@ export function Achievements() {
                     {/* 説明 */}
                     <p className={`text-sm mb-4 ${
                       achievement.completed
-                        ? 'text-gray-300'
-                        : 'text-gray-600'
+                        ? 'text-gray-600'
+                        : 'text-gray-500'
                     }`}>
                       {achievement.description}
                     </p>
@@ -309,7 +309,7 @@ export function Achievements() {
         ) : (
           <div className="text-center py-20">
             <div className="text-6xl mb-4 opacity-50">🔍</div>
-            <p className="text-gray-400 text-xl">該当する実績がありません</p>
+            <p className="text-gray-600 text-xl">該当する実績がありません</p>
             <p className="text-gray-500 text-sm mt-2">別のフィルターを試してみてください</p>
           </div>
         )}
@@ -336,7 +336,7 @@ function FilterButton({
       className={`px-5 py-2.5 rounded-xl font-semibold transition-all duration-200 ${
         active
           ? `bg-gradient-to-r ${gradient} text-white shadow-lg scale-105`
-          : 'bg-gray-700/50 text-gray-300 hover:bg-gray-600/50 hover:scale-102'
+          : 'bg-gray-200/70 text-gray-700 hover:bg-gray-300/70 hover:scale-102'
       }`}
     >
       {children}
