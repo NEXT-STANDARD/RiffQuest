@@ -19,7 +19,17 @@ export function BPMDetector() {
 
   useEffect(() => {
     // Socket.io接続
+    console.log('[BPM Detector Component] Socket.io接続中...');
     const newSocket = io(API_URL);
+
+    newSocket.on('connect', () => {
+      console.log('[BPM Detector Component] Socket.io接続成功');
+    });
+
+    newSocket.on('disconnect', () => {
+      console.log('[BPM Detector Component] Socket.io切断');
+    });
+
     setSocket(newSocket);
 
     return () => {
@@ -33,22 +43,29 @@ export function BPMDetector() {
   const startDetection = async () => {
     try {
       setError(null);
+      console.log('[BPM Detector Component] 検出開始中...');
+
       const detector = new BPMDetectorClass();
       detectorRef.current = detector;
 
       await detector.start((bpm: number) => {
+        console.log('[BPM Detector Component] BPM受信:', bpm);
         setCurrentBPM(bpm);
 
         // サーバーにBPMを送信
         if (socket) {
+          console.log('[BPM Detector Component] サーバーに送信:', bpm);
           socket.emit('bpm:detected', { bpm });
+        } else {
+          console.warn('[BPM Detector Component] Socket未接続 - サーバーに送信できません');
         }
       });
 
       setIsDetecting(true);
+      console.log('[BPM Detector Component] 検出開始成功');
     } catch (err: any) {
       setError(err.message || 'BPM検出の開始に失敗しました');
-      console.error('[BPM Detector] エラー:', err);
+      console.error('[BPM Detector Component] エラー:', err);
     }
   };
 

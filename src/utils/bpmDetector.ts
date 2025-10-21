@@ -17,7 +17,9 @@ export class BPMDetector {
   private readonly maxIntervals = 8; // 平均化するビート間隔数
   private readonly minBPM = 40;
   private readonly maxBPM = 300;
-  private readonly beatThreshold = 150; // 音量しきい値（0-255）
+  private readonly beatThreshold = 100; // 音量しきい値（0-255）
+  private readonly minBeatInterval = 200; // 最小ビート間隔（ミリ秒）- 重複検出を防ぐ
+  private lastVolume: number = 0;
 
   /**
    * マイク入力を開始してBPM検出を開始
@@ -41,7 +43,7 @@ export class BPMDetector {
       // アナライザーノードを作成
       this.analyser = this.audioContext.createAnalyser();
       this.analyser.fftSize = 2048;
-      this.analyser.smoothingTimeConstant = 0.8;
+      this.analyser.smoothingTimeConstant = 0.3; // より敏感に
 
       // マイク入力をアナライザーに接続
       this.microphone = this.audioContext.createMediaStreamSource(stream);
@@ -84,6 +86,7 @@ export class BPMDetector {
     this.dataArray = null;
     this.beatIntervals = [];
     this.lastBeatTime = 0;
+    this.lastVolume = 0;
 
     console.log('[BPM Detector] 検出停止');
   }
@@ -97,25 +100,36 @@ export class BPMDetector {
     // 周波数データを取得
     this.analyser.getByteFrequencyData(this.dataArray);
 
-    // 低周波数帯域（メトロノームのクリック音）の音量を計算
-    // 0-500Hz あたりの音量を合計
-    const lowFreqEnd = Math.floor(500 / (this.audioContext!.sampleRate / this.analyser.fftSize));
-    let volume = 0;
-    for (let i = 0; i < lowFreqEnd && i < this.dataArray.length; i++) {
-      volume += this.dataArray[i];
+    // 全周波数帯域の平均音量を計算（メトロノームは広範囲の周波数を持つ）
+    let totalVolume = 0;
+    for (let i = 0; i < this.dataArray.length; i++) {
+      totalVolume += this.dataArray[i];
     }
-    volume = volume / lowFreqEnd;
+    const volume = totalVolume / this.dataArray.length;
 
-    // ビート検出
+    // デバッグ: 音量をログ出力（最初の5秒間のみ）
+    if (Date.now() - this.lastBeatTime < 5000 || this.beatIntervals.length === 0) {
+      if (Math.random() < 0.01) { // 1%の確率でログ出力
+        console.log('[BPM Detector] 音量:', Math.round(volume), '/ しきい値:', this.beatThreshold);
+      }
+    }
+
     const now = Date.now();
-    if (volume > this.beatThreshold) {
-      if (this.lastBeatTime > 0) {
-        const interval = now - this.lastBeatTime;
+
+    // ビート検出: 音量が上がった瞬間（エッジ検出）
+    const isOnset = volume > this.beatThreshold && this.lastVolume <= this.beatThreshold;
+
+    if (isOnset) {
+      const timeSinceLastBeat = now - this.lastBeatTime;
+
+      // 最小間隔チェック（重複検出を防ぐ）
+      if (timeSinceLastBeat >= this.minBeatInterval) {
+        console.log('[BPM Detector] ビート検出！ 間隔:', timeSinceLastBeat, 'ms');
 
         // 有効なBPM範囲内のビート間隔のみ記録
-        const bpm = 60000 / interval;
+        const bpm = 60000 / timeSinceLastBeat;
         if (bpm >= this.minBPM && bpm <= this.maxBPM) {
-          this.beatIntervals.push(interval);
+          this.beatIntervals.push(timeSinceLastBeat);
 
           // 古い間隔を削除
           if (this.beatIntervals.length > this.maxIntervals) {
@@ -123,18 +137,25 @@ export class BPMDetector {
           }
 
           // BPMを計算して通知
-          if (this.beatIntervals.length >= 4) {
+          if (this.beatIntervals.length >= 3) { // 3ビートから計算開始
             const avgInterval = this.beatIntervals.reduce((a, b) => a + b, 0) / this.beatIntervals.length;
             const detectedBPM = Math.round(60000 / avgInterval);
+
+            console.log('[BPM Detector] BPM計算:', detectedBPM, '（', this.beatIntervals.length, 'ビートから）');
 
             if (this.onBPMDetected) {
               this.onBPMDetected(detectedBPM);
             }
           }
+        } else {
+          console.log('[BPM Detector] 範囲外BPM:', Math.round(bpm));
         }
+
+        this.lastBeatTime = now;
       }
-      this.lastBeatTime = now;
     }
+
+    this.lastVolume = volume;
 
     // 次のフレームで再度検出
     this.detectionInterval = requestAnimationFrame(() => this.detectBeats());
@@ -156,5 +177,7 @@ export class BPMDetector {
   reset(): void {
     this.beatIntervals = [];
     this.lastBeatTime = 0;
+    this.lastVolume = 0;
+    console.log('[BPM Detector] リセット');
   }
 }
