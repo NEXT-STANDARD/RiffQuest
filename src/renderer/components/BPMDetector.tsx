@@ -15,7 +15,12 @@ export function BPMDetector() {
   const [currentBPM, setCurrentBPM] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [socket, setSocket] = useState<Socket | null>(null);
+  const [currentVolume, setCurrentVolume] = useState<number>(0);
+  const [threshold, setThreshold] = useState<number>(30);
+  const [audioDevices, setAudioDevices] = useState<MediaDeviceInfo[]>([]);
+  const [selectedDevice, setSelectedDevice] = useState<string>('');
   const detectorRef = useRef<BPMDetectorClass | null>(null);
+  const volumeMonitorRef = useRef<number | null>(null);
 
   useEffect(() => {
     // Socket.io接続
@@ -32,6 +37,9 @@ export function BPMDetector() {
 
     setSocket(newSocket);
 
+    // オーディオデバイス一覧を取得
+    loadAudioDevices();
+
     return () => {
       newSocket.close();
       if (detectorRef.current) {
@@ -40,10 +48,23 @@ export function BPMDetector() {
     };
   }, []);
 
+  const loadAudioDevices = async () => {
+    try {
+      const devices = await BPMDetectorClass.getAudioDevices();
+      setAudioDevices(devices);
+      if (devices.length > 0) {
+        setSelectedDevice(devices[0].deviceId);
+      }
+    } catch (err: any) {
+      console.error('[BPM Detector Component] デバイス取得エラー:', err);
+      setError('オーディオデバイスの取得に失敗しました');
+    }
+  };
+
   const startDetection = async () => {
     try {
       setError(null);
-      console.log('[BPM Detector Component] 検出開始中...');
+      console.log('[BPM Detector Component] 検出開始中...', selectedDevice);
 
       const detector = new BPMDetectorClass();
       detectorRef.current = detector;
@@ -59,7 +80,15 @@ export function BPMDetector() {
         } else {
           console.warn('[BPM Detector Component] Socket未接続 - サーバーに送信できません');
         }
-      });
+      }, selectedDevice || undefined);
+
+      // 音量モニタリングを開始
+      volumeMonitorRef.current = window.setInterval(() => {
+        if (detectorRef.current) {
+          const vol = detectorRef.current.getCurrentVolume();
+          setCurrentVolume(vol);
+        }
+      }, 100); // 100msごとに更新
 
       setIsDetecting(true);
       console.log('[BPM Detector Component] 検出開始成功');
@@ -70,18 +99,30 @@ export function BPMDetector() {
   };
 
   const stopDetection = () => {
+    if (volumeMonitorRef.current) {
+      clearInterval(volumeMonitorRef.current);
+      volumeMonitorRef.current = null;
+    }
     if (detectorRef.current) {
       detectorRef.current.stop();
       detectorRef.current = null;
     }
     setIsDetecting(false);
     setCurrentBPM(null);
+    setCurrentVolume(0);
   };
 
   const resetDetection = () => {
     if (detectorRef.current) {
       detectorRef.current.reset();
       setCurrentBPM(null);
+    }
+  };
+
+  const handleThresholdChange = (newThreshold: number) => {
+    setThreshold(newThreshold);
+    if (detectorRef.current) {
+      detectorRef.current.setThreshold(newThreshold);
     }
   };
 
@@ -108,9 +149,59 @@ export function BPMDetector() {
         </div>
       )}
 
+      {isDetecting && (
+        <div className="volume-monitor">
+          <div className="volume-info">
+            <span>現在の音量: {currentVolume}</span>
+            <span>しきい値: {threshold}</span>
+          </div>
+          <div className="volume-bar-container">
+            <div
+              className="volume-bar"
+              style={{
+                width: `${Math.min(100, (currentVolume / 255) * 100)}%`,
+                backgroundColor: currentVolume > threshold ? '#10b981' : '#6b7280'
+              }}
+            />
+            <div
+              className="threshold-line"
+              style={{ left: `${(threshold / 255) * 100}%` }}
+            />
+          </div>
+          <div className="threshold-control">
+            <label>しきい値調整:</label>
+            <input
+              type="range"
+              min="10"
+              max="150"
+              value={threshold}
+              onChange={(e) => handleThresholdChange(Number(e.target.value))}
+            />
+          </div>
+        </div>
+      )}
+
+      {!isDetecting && audioDevices.length > 0 && (
+        <div className="device-selector">
+          <label htmlFor="audio-device">オーディオ入力デバイス:</label>
+          <select
+            id="audio-device"
+            value={selectedDevice}
+            onChange={(e) => setSelectedDevice(e.target.value)}
+          >
+            {audioDevices.map((device) => (
+              <option key={device.deviceId} value={device.deviceId}>
+                {device.label || `デバイス ${device.deviceId.substring(0, 8)}...`}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
+
       <div className="bpm-instructions">
         {!isDetecting ? (
           <>
+            <p>✓ 使用するオーディオデバイス（AG03など）を選択してください</p>
             <p>✓ マイクへのアクセスを許可してください</p>
             <p>✓ メトロノームを再生してください</p>
             <p>✓ 安定したBPMが検出されるまで数秒かかります</p>

@@ -15,6 +15,9 @@
 
 .overlay-header {
   margin-bottom: 16px;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
 .scene-badge {
@@ -26,6 +29,29 @@
   border-radius: 20px;
   font-size: 14px;
   font-weight: 600;
+}
+
+.bpm-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  animation: bpm-pulse 1s ease-in-out infinite;
+}
+
+@keyframes bpm-pulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.7);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 0 0 8px rgba(251, 191, 36, 0);
+  }
 }
 
 .overlay-stats {

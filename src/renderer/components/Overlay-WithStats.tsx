@@ -31,6 +31,7 @@ export function Overlay() {
   const [connected, setConnected] = useState(false);
   const [todayStats, setTodayStats] = useState<DailyStats | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [currentBPM, setCurrentBPM] = useState<number | null>(null);
 
   useEffect(() => {
     console.log('[Overlay] 初期化開始');
@@ -62,6 +63,11 @@ export function Overlay() {
       console.log('[Overlay] 統計更新:', data);
       setTodayStats(data.today);
       setProfile(data.profile);
+    });
+
+    newSocket.on('bpm:updated', (data: { bpm: number }) => {
+      console.log('[Overlay] BPM更新:', data.bpm);
+      setCurrentBPM(data.bpm);
     });
 
     // 初期統計を取得
@@ -123,6 +129,11 @@ export function Overlay() {
         <div className="scene-badge">
           {isActive ? '🎸' : '⏸️'} {currentScene}
         </div>
+        {currentBPM && (
+          <div className="bpm-badge">
+            🎵 {currentBPM} BPM
+          </div>
+        )}
       </div>
 
       <div className="overlay-stats">
