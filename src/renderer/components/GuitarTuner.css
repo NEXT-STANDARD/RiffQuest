@@ -1,0 +1,405 @@
+.guitar-tuner {
+  max-width: 100%;
+  margin: 0;
+  padding: 30px;
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  color: white;
+}
+
+.tuner-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.tuner-header h2 {
+  font-size: 32px;
+  color: #fbbf24;
+  margin: 0 0 10px 0;
+}
+
+.tuner-header p {
+  font-size: 16px;
+  color: #94a3b8;
+  margin: 0;
+}
+
+.tuner-display {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 40px;
+  border-radius: 16px;
+  margin-bottom: 24px;
+  border: 2px solid rgba(251, 191, 36, 0.2);
+}
+
+.pitch-indicator {
+  text-align: center;
+  padding: 30px;
+  border-radius: 12px;
+  margin-bottom: 30px;
+  transition: all 0.3s;
+}
+
+.pitch-indicator.none {
+  background: rgba(148, 163, 184, 0.1);
+}
+
+.pitch-indicator.far {
+  background: rgba(239, 68, 68, 0.2);
+  border: 2px solid #ef4444;
+}
+
+.pitch-indicator.close {
+  background: rgba(251, 191, 36, 0.2);
+  border: 2px solid #fbbf24;
+}
+
+.pitch-indicator.perfect {
+  background: rgba(34, 197, 94, 0.2);
+  border: 2px solid #22c55e;
+  animation: perfect-pulse 2s ease-in-out infinite;
+}
+
+@keyframes perfect-pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+  }
+  50% {
+    box-shadow: 0 0 0 20px rgba(34, 197, 94, 0);
+  }
+}
+
+.note-display {
+  font-size: 96px;
+  font-weight: 900;
+  line-height: 1;
+  margin-bottom: 8px;
+}
+
+.octave {
+  font-size: 48px;
+  vertical-align: super;
+  opacity: 0.7;
+}
+
+.frequency {
+  font-size: 24px;
+  color: #94a3b8;
+  font-weight: 600;
+}
+
+.waiting {
+  font-size: 32px;
+  color: #64748b;
+  padding: 40px 0;
+}
+
+.tuning-meter {
+  position: relative;
+}
+
+.meter-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 20px;
+  color: #94a3b8;
+  padding: 0 10px;
+}
+
+.meter-bar {
+  position: relative;
+  height: 40px;
+  background: linear-gradient(to right, #ef4444 0%, #fbbf24 50%, #ef4444 100%);
+  border-radius: 20px;
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+
+.meter-indicator {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 8px;
+  height: 60px;
+  background: white;
+  border-radius: 4px;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
+  transition: left 0.1s;
+  z-index: 10;
+}
+
+.meter-indicator.perfect {
+  background: #22c55e;
+  box-shadow: 0 0 30px rgba(34, 197, 94, 0.9);
+}
+
+.meter-center {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: rgba(255, 255, 255, 0.8);
+  transform: translateX(-50%);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+.cents-display {
+  text-align: center;
+  font-size: 18px;
+  font-weight: 600;
+  color: #fbbf24;
+  margin-bottom: 12px;
+}
+
+.tuning-message {
+  text-align: center;
+  font-size: 20px;
+  font-weight: 700;
+  padding: 12px;
+  border-radius: 8px;
+  margin-top: 16px;
+}
+
+.tuning-message.low {
+  background: rgba(239, 68, 68, 0.2);
+  color: #fca5a5;
+}
+
+.tuning-message.high {
+  background: rgba(239, 68, 68, 0.2);
+  color: #fca5a5;
+}
+
+.tuning-message.perfect {
+  background: rgba(34, 197, 94, 0.2);
+  color: #86efac;
+}
+
+.tuner-error {
+  background: linear-gradient(135deg, #7f1d1d, #991b1b);
+  color: #fca5a5;
+  padding: 16px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  text-align: center;
+  font-weight: 600;
+  border: 1px solid #dc2626;
+}
+
+.device-selector {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  border: 2px solid rgba(251, 191, 36, 0.2);
+}
+
+.device-selector label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: #94a3b8;
+  margin-bottom: 8px;
+}
+
+.device-selector select {
+  width: 100%;
+  padding: 12px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  border: 2px solid rgba(251, 191, 36, 0.3);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.device-selector select:hover {
+  border-color: #fbbf24;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.device-selector select:focus {
+  outline: none;
+  border-color: #fbbf24;
+  box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.1);
+}
+
+.tuner-controls {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-bottom: 30px;
+}
+
+.tuner-controls button {
+  padding: 14px 32px;
+  font-size: 18px;
+  font-weight: 700;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.btn-start {
+  background: linear-gradient(135deg, #fbbf24, #f59e0b);
+  color: #1e293b;
+}
+
+.btn-start:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(251, 191, 36, 0.4);
+}
+
+.btn-stop {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+}
+
+.btn-stop:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
+}
+
+.guitar-reference {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 24px;
+  border-radius: 12px;
+  margin-bottom: 24px;
+  border: 1px solid rgba(251, 191, 36, 0.2);
+}
+
+.guitar-reference h3 {
+  color: #fbbf24;
+  margin: 0 0 16px 0;
+  font-size: 18px;
+  text-align: center;
+}
+
+.strings-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.string-card {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 16px;
+  border-radius: 8px;
+  text-align: center;
+  border: 1px solid rgba(251, 191, 36, 0.2);
+  transition: all 0.2s;
+}
+
+.string-card:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: #fbbf24;
+}
+
+.string-number {
+  font-size: 12px;
+  color: #94a3b8;
+  margin-bottom: 4px;
+}
+
+.string-note {
+  font-size: 32px;
+  font-weight: 700;
+  color: #fbbf24;
+  margin-bottom: 4px;
+}
+
+.string-octave {
+  font-size: 16px;
+  vertical-align: super;
+  opacity: 0.7;
+}
+
+.string-freq {
+  font-size: 12px;
+  color: #64748b;
+}
+
+.tuner-info {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 24px;
+  border-radius: 12px;
+  border: 1px solid rgba(251, 191, 36, 0.2);
+  margin-bottom: 24px;
+}
+
+.tuner-info h3 {
+  color: #fbbf24;
+  margin: 0 0 16px 0;
+  font-size: 18px;
+}
+
+.tuner-info ol {
+  margin: 0;
+  padding-left: 20px;
+  color: #94a3b8;
+}
+
+.tuner-info li {
+  margin-bottom: 8px;
+  line-height: 1.6;
+}
+
+.tuning-guide {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 24px;
+  border-radius: 12px;
+  border: 1px solid rgba(251, 191, 36, 0.2);
+}
+
+.tuning-guide h3 {
+  color: #fbbf24;
+  margin: 0 0 20px 0;
+  font-size: 18px;
+  text-align: center;
+}
+
+.tuning-list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+@media (max-width: 1200px) {
+  .tuning-list {
+    grid-template-columns: 1fr;
+  }
+}
+
+.tuning-item {
+  background: rgba(255, 255, 255, 0.03);
+  padding: 16px;
+  border-radius: 8px;
+  border: 1px solid rgba(251, 191, 36, 0.1);
+  transition: all 0.2s;
+}
+
+.tuning-item:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(251, 191, 36, 0.3);
+  transform: translateX(4px);
+}
+
+.tuning-name {
+  font-size: 16px;
+  font-weight: 700;
+  color: #fbbf24;
+  margin-bottom: 8px;
+}
+
+.tuning-desc {
+  font-size: 14px;
+  color: #94a3b8;
+  line-height: 1.6;
+}

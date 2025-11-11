@@ -7,34 +7,69 @@ import { History } from './components/History';
 import { Settings } from './components/Settings';
 import { BPMDetector } from './components/BPMDetector';
 import { CameraView } from './components/CameraView';
+import { GuitarTuner } from './components/GuitarTuner';
 import './App.css';
 
 function App() {
   return (
     <Router>
       <div className="app">
-        <header className="app-header">
-          <h1>🎸 RiffQuest</h1>
-          <p>ギター練習を可視化・計測・ゲーム化する OBS 連携ツール</p>
-          <p className="version">Version: 0.1.0 (Web App)</p>
+        <aside className="app-sidebar">
+          <div className="sidebar-header">
+            <h1>🎸 RiffQuest</h1>
+            <p className="version">v0.1.0</p>
+          </div>
 
-          <nav className="app-nav">
-            <Link to="/">ダッシュボード</Link>
-            <Link to="/achievements">🏆 実績</Link>
-            <Link to="/leaderboard">🌍 ランキング</Link>
-            <Link to="/bpm">🎵 BPM検出</Link>
-            <Link to="/camera">📹 カメラ</Link>
-            <Link to="/obs">OBS接続</Link>
-            <Link to="/history">練習履歴</Link>
-            <Link to="/settings">⚙️ 設定</Link>
+          <nav className="sidebar-nav">
+            <Link to="/" className="nav-item">
+              <span className="nav-icon">📊</span>
+              <span className="nav-label">ダッシュボード</span>
+            </Link>
+            <Link to="/tuner" className="nav-item">
+              <span className="nav-icon">🎸</span>
+              <span className="nav-label">チューナー</span>
+            </Link>
+            <Link to="/bpm" className="nav-item">
+              <span className="nav-icon">🎵</span>
+              <span className="nav-label">BPM検出</span>
+            </Link>
+            <Link to="/camera" className="nav-item">
+              <span className="nav-icon">📹</span>
+              <span className="nav-label">カメラ</span>
+            </Link>
+            <Link to="/achievements" className="nav-item">
+              <span className="nav-icon">🏆</span>
+              <span className="nav-label">実績</span>
+            </Link>
+            <Link to="/leaderboard" className="nav-item">
+              <span className="nav-icon">🌍</span>
+              <span className="nav-label">ランキング</span>
+            </Link>
+            <Link to="/history" className="nav-item">
+              <span className="nav-icon">📜</span>
+              <span className="nav-label">練習履歴</span>
+            </Link>
+            <Link to="/obs" className="nav-item">
+              <span className="nav-icon">🎥</span>
+              <span className="nav-label">OBS接続</span>
+            </Link>
+            <Link to="/settings" className="nav-item">
+              <span className="nav-icon">⚙️</span>
+              <span className="nav-label">設定</span>
+            </Link>
           </nav>
-        </header>
+
+          <div className="sidebar-footer">
+            <p>ギター練習を可視化・計測・ゲーム化</p>
+          </div>
+        </aside>
 
         <main className="app-main">
           <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="/achievements" element={<Achievements />} />
             <Route path="/leaderboard" element={<Leaderboard />} />
+            <Route path="/tuner" element={<GuitarTuner />} />
             <Route path="/bpm" element={<BPMDetector />} />
             <Route path="/camera" element={<CameraView />} />
             <Route path="/obs" element={<OBSConnection />} />
