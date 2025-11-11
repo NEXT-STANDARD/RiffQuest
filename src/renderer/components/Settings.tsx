@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import '../App.css';
+import './Settings.css';
 
 interface Backup {
   filename: string;

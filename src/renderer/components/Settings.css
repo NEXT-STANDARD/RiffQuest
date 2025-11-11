@@ -1,0 +1,289 @@
+.settings-container {
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.settings-container h2 {
+  font-size: var(--font-size-4xl);
+  font-weight: var(--font-extrabold);
+  color: var(--text-primary);
+  margin-bottom: var(--space-8);
+}
+
+/* ========== Message Alerts ========== */
+.message {
+  padding: var(--space-4) var(--space-6);
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--space-6);
+  font-weight: var(--font-medium);
+  animation: slideIn 0.3s ease-out;
+}
+
+.message.success {
+  background: #d1fae5;
+  color: #065f46;
+  border: 1px solid #6ee7b7;
+}
+
+.message.error {
+  background: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #fca5a5;
+}
+
+/* ========== Settings Sections ========== */
+.settings-section {
+  background: var(--bg-card);
+  border-radius: var(--radius-2xl);
+  padding: var(--space-8);
+  margin-bottom: var(--space-8);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-subtle);
+}
+
+.settings-section h3 {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-bold);
+  color: var(--text-primary);
+  margin-bottom: var(--space-4);
+}
+
+.section-description {
+  font-size: var(--font-size-base);
+  color: var(--text-secondary);
+  margin-bottom: var(--space-6);
+  line-height: 1.7;
+}
+
+/* ========== Danger Section ========== */
+.danger-section {
+  border-left: 4px solid var(--accent-red);
+}
+
+.danger-text {
+  color: var(--accent-red);
+  font-weight: var(--font-medium);
+}
+
+/* ========== Buttons ========== */
+.btn-primary {
+  padding: var(--space-4) var(--space-8);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-semibold);
+  border: none;
+  border-radius: var(--radius-lg);
+  background: linear-gradient(135deg, var(--accent-blue) 0%, var(--accent-blue-dark) 100%);
+  color: white;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-danger {
+  padding: var(--space-4) var(--space-8);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-semibold);
+  border: none;
+  border-radius: var(--radius-lg);
+  background: linear-gradient(135deg, var(--accent-red) 0%, #dc2626 100%);
+  color: white;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-danger:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.btn-danger:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  padding: var(--space-4) var(--space-8);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-semibold);
+  border: 2px solid var(--border-normal);
+  border-radius: var(--radius-lg);
+  background: var(--bg-card);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all var(--transition-base);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: var(--bg-tertiary);
+  border-color: var(--border-strong);
+}
+
+.btn-secondary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ========== Backup List ========== */
+.backup-list {
+  margin-top: var(--space-6);
+}
+
+.backup-list h4 {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-semibold);
+  color: var(--text-primary);
+  margin-bottom: var(--space-4);
+}
+
+.no-data {
+  padding: var(--space-6);
+  text-align: center;
+  color: var(--text-tertiary);
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-lg);
+  font-style: italic;
+}
+
+/* ========== Backup Table ========== */
+.backup-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-subtle);
+}
+
+.backup-table thead {
+  background: var(--bg-tertiary);
+}
+
+.backup-table th {
+  padding: var(--space-4) var(--space-6);
+  text-align: left;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-semibold);
+  color: var(--text-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid var(--border-normal);
+}
+
+.backup-table td {
+  padding: var(--space-4) var(--space-6);
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.backup-table tbody tr:hover {
+  background: var(--bg-tertiary);
+  transition: background var(--transition-fast);
+}
+
+.backup-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* ========== Confirm Box ========== */
+.confirm-box {
+  background: var(--bg-tertiary);
+  padding: var(--space-6);
+  border-radius: var(--radius-lg);
+  border: 2px solid var(--accent-red);
+  margin-top: var(--space-4);
+}
+
+.confirm-message {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-medium);
+  color: var(--text-primary);
+  margin-bottom: var(--space-6);
+  line-height: 1.6;
+}
+
+.confirm-buttons {
+  display: flex;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+/* ========== Info List ========== */
+.info-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.info-list li {
+  padding: var(--space-3) var(--space-4);
+  margin-bottom: var(--space-2);
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-md);
+  border-left: 3px solid var(--accent-blue);
+  color: var(--text-secondary);
+  font-size: var(--font-size-base);
+  transition: all var(--transition-fast);
+}
+
+.info-list li:hover {
+  background: var(--bg-elevated);
+  transform: translateX(4px);
+}
+
+.info-list li:last-child {
+  margin-bottom: 0;
+}
+
+/* ========== Animations ========== */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ========== Responsive Design ========== */
+@media (max-width: 768px) {
+  .settings-container h2 {
+    font-size: var(--font-size-3xl);
+  }
+
+  .settings-section {
+    padding: var(--space-6);
+  }
+
+  .backup-table {
+    font-size: var(--font-size-xs);
+  }
+
+  .backup-table th,
+  .backup-table td {
+    padding: var(--space-3) var(--space-4);
+  }
+
+  .confirm-buttons {
+    flex-direction: column;
+  }
+
+  .confirm-buttons button {
+    width: 100%;
+  }
+}

@@ -1,0 +1,471 @@
+.chord-dictionary {
+  max-width: 100%;
+  margin: 0;
+  padding: var(--space-8);
+  background: var(--bg-card);
+  border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--border-subtle);
+}
+
+.chord-dictionary-header {
+  text-align: center;
+  margin-bottom: var(--space-8);
+}
+
+.chord-dictionary-header h2 {
+  font-size: var(--font-size-4xl);
+  font-weight: var(--font-extrabold);
+  color: var(--text-primary);
+  margin-bottom: var(--space-2);
+}
+
+.chord-dictionary-header p {
+  font-size: var(--font-size-lg);
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+/* ========== Category Filter ========== */
+.category-filter {
+  background: var(--bg-elevated);
+  padding: var(--space-5);
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--space-8);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-subtle);
+}
+
+.category-filter h3 {
+  font-size: var(--font-size-lg);
+  color: var(--text-primary);
+  margin: 0 0 var(--space-3) 0;
+}
+
+.category-buttons {
+  display: flex;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.category-btn {
+  padding: var(--space-2) var(--space-5);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-semibold);
+  border: 2px solid var(--accent-yellow);
+  border-radius: var(--radius-md);
+  background: var(--bg-card);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all var(--transition-base);
+}
+
+.category-btn:hover {
+  background: var(--bg-tertiary);
+  transform: translateY(-2px);
+}
+
+.category-btn.active {
+  background: linear-gradient(135deg, var(--accent-yellow) 0%, #d97706 100%);
+  color: white;
+  border-color: var(--accent-yellow-light);
+}
+
+/* ========== Chord Selector ========== */
+.chord-selector {
+  background: var(--bg-elevated);
+  padding: var(--space-6);
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--space-8);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-subtle);
+}
+
+.chord-selector h3 {
+  font-size: var(--font-size-lg);
+  color: var(--text-primary);
+  margin: 0 0 var(--space-4) 0;
+}
+
+.chord-buttons {
+  display: flex;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.chord-btn {
+  padding: var(--space-3) var(--space-6);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-semibold);
+  border: 2px solid var(--accent-yellow);
+  border-radius: var(--radius-md);
+  background: var(--bg-card);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  min-width: 60px;
+}
+
+.chord-btn:hover {
+  background: var(--bg-tertiary);
+  transform: translateY(-2px);
+}
+
+.chord-btn.active {
+  background: linear-gradient(135deg, var(--accent-yellow) 0%, #d97706 100%);
+  color: white;
+  border-color: var(--accent-yellow-light);
+  transform: scale(1.05);
+}
+
+/* ========== Chord Display ========== */
+.chord-display {
+  background: var(--bg-elevated);
+  padding: var(--space-8);
+  border-radius: var(--radius-xl);
+  margin-bottom: var(--space-8);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-normal);
+}
+
+.chord-display-header {
+  text-align: center;
+  margin-bottom: var(--space-8);
+}
+
+.chord-display-header h2 {
+  font-size: var(--font-size-4xl);
+  font-weight: var(--font-extrabold);
+  color: var(--text-primary);
+  margin-bottom: var(--space-2);
+  background: linear-gradient(to right, var(--accent-yellow), var(--accent-yellow-light));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.chord-display-header p {
+  font-size: var(--font-size-base);
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+/* ========== Position Selector ========== */
+.position-selector {
+  display: flex;
+  gap: var(--space-3);
+  justify-content: center;
+  margin-bottom: var(--space-8);
+  flex-wrap: wrap;
+}
+
+.position-btn {
+  padding: var(--space-2) var(--space-4);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-semibold);
+  border: 2px solid var(--accent-yellow);
+  border-radius: var(--radius-sm);
+  background: var(--bg-card);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all var(--transition-base);
+}
+
+.position-btn:hover {
+  background: var(--bg-tertiary);
+}
+
+.position-btn.active {
+  background: linear-gradient(135deg, var(--accent-yellow) 0%, #d97706 100%);
+  color: white;
+  border-color: var(--accent-yellow-light);
+}
+
+/* ========== Chord Diagram ========== */
+.chord-diagram-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: var(--space-8);
+}
+
+.chord-diagram {
+  background: var(--bg-card);
+  padding: var(--space-8);
+  border-radius: var(--radius-lg);
+  border: 3px solid var(--accent-yellow);
+  display: inline-block;
+}
+
+.diagram-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: var(--space-2);
+  padding: 0 var(--space-2);
+}
+
+.string-labels,
+.fret-position {
+  display: flex;
+  gap: 32px;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-semibold);
+  color: var(--text-primary);
+}
+
+.fret-position {
+  justify-content: flex-end;
+  margin-top: calc(var(--space-5) * -1);
+  font-size: var(--font-size-xs);
+  color: var(--text-secondary);
+}
+
+.fretboard {
+  position: relative;
+}
+
+.fret {
+  display: flex;
+  gap: 30px;
+  padding: var(--space-3) var(--space-2);
+  position: relative;
+  border-bottom: 2px solid var(--text-muted);
+}
+
+.fret:last-child {
+  border-bottom: 3px solid var(--text-primary);
+}
+
+.fret.first {
+  border-top: 4px solid var(--text-primary);
+}
+
+.string-position {
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.finger-dot {
+  width: 20px;
+  height: 20px;
+  border-radius: var(--radius-full);
+  background: linear-gradient(135deg, var(--accent-yellow) 0%, #d97706 100%);
+  color: white;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-bold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-sm);
+}
+
+.open-string {
+  width: 18px;
+  height: 18px;
+  border-radius: var(--radius-full);
+  border: 2px solid var(--accent-green);
+  background: var(--bg-card);
+  color: var(--accent-green);
+  font-size: 10px;
+  font-weight: var(--font-bold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.muted-string {
+  color: var(--accent-red);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-bold);
+}
+
+.fret-number {
+  position: absolute;
+  right: -30px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-semibold);
+  color: var(--text-tertiary);
+}
+
+/* ========== Finger Legend ========== */
+.finger-legend {
+  display: flex;
+  gap: var(--space-5);
+  justify-content: center;
+  margin-top: var(--space-5);
+  flex-wrap: wrap;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+}
+
+.legend-symbol {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: var(--font-bold);
+}
+
+.legend-dot {
+  width: 20px;
+  height: 20px;
+  border-radius: var(--radius-full);
+  background: linear-gradient(135deg, var(--accent-yellow) 0%, #d97706 100%);
+  color: white;
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ========== Chord Tips ========== */
+.chord-tips {
+  background: var(--bg-card);
+  padding: var(--space-5);
+  border-radius: var(--radius-md);
+  border-left: 4px solid var(--accent-yellow);
+}
+
+.chord-tips h4 {
+  font-size: var(--font-size-base);
+  color: var(--text-primary);
+  margin: 0 0 var(--space-3) 0;
+}
+
+.chord-tips ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.chord-tips li {
+  padding: var(--space-2) 0 var(--space-2) var(--space-6);
+  position: relative;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  font-size: var(--font-size-sm);
+}
+
+.chord-tips li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  color: var(--accent-green);
+  font-weight: var(--font-bold);
+  font-size: var(--font-size-base);
+}
+
+/* ========== Common Progressions ========== */
+.common-progressions {
+  background: var(--bg-elevated);
+  padding: var(--space-6);
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--space-8);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-subtle);
+}
+
+.common-progressions h3 {
+  font-size: var(--font-size-2xl);
+  color: var(--text-primary);
+  margin: 0 0 var(--space-5) 0;
+  text-align: center;
+}
+
+.progressions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--space-4);
+}
+
+.progression-card {
+  background: var(--bg-card);
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  border-left: 4px solid var(--accent-yellow);
+  transition: all var(--transition-base);
+}
+
+.progression-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.progression-card h4 {
+  font-size: var(--font-size-base);
+  color: var(--text-primary);
+  margin: 0 0 var(--space-2) 0;
+}
+
+.progression-card p {
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  margin: 0;
+  font-weight: var(--font-semibold);
+}
+
+/* ========== Practice Guide ========== */
+.practice-guide {
+  background: var(--bg-elevated);
+  padding: var(--space-6);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-subtle);
+}
+
+.practice-guide h3 {
+  font-size: var(--font-size-2xl);
+  color: var(--text-primary);
+  margin: 0 0 var(--space-5) 0;
+  text-align: center;
+}
+
+.guide-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-4);
+}
+
+@media (max-width: 900px) {
+  .guide-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.guide-card {
+  background: var(--bg-card);
+  padding: var(--space-5);
+  border-radius: var(--radius-md);
+  border-left: 4px solid var(--accent-yellow);
+  transition: all var(--transition-base);
+}
+
+.guide-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.guide-card h4 {
+  font-size: var(--font-size-lg);
+  color: var(--text-primary);
+  margin: 0 0 var(--space-2) 0;
+}
+
+.guide-card p {
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  margin: 0;
+  line-height: 1.6;
+}
